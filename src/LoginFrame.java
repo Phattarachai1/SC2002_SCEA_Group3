@@ -25,9 +25,10 @@ public class LoginFrame extends JFrame {
         this.applications = applications;
 
         setTitle("Internship Management System - Login");
-        setSize(500, 400);
+        setSize(650, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setResizable(false);
 
         // Main panel with green theme
         JPanel mainPanel = new JPanel();
@@ -68,8 +69,12 @@ public class LoginFrame extends JFrame {
         formPanel.add(userIdLabel, gbc);
 
         gbc.gridx = 1;
-        userIdField = new JTextField(20);
-        userIdField.setFont(new Font("Arial", Font.PLAIN, 14));
+        userIdField = new JTextField(25);
+        userIdField.setFont(new Font("Arial", Font.PLAIN, 16));
+        userIdField.setPreferredSize(new Dimension(350, 40));
+        userIdField.setMinimumSize(new Dimension(350, 40));
+        userIdField.setEditable(true);
+        userIdField.setEnabled(true);
         userIdField.setToolTipText("Enter your email address");
         formPanel.add(userIdField, gbc);
 
@@ -81,8 +86,12 @@ public class LoginFrame extends JFrame {
         formPanel.add(passwordLabel, gbc);
 
         gbc.gridx = 1;
-        passwordField = new JPasswordField(20);
-        passwordField.setFont(new Font("Arial", Font.PLAIN, 14));
+        passwordField = new JPasswordField(25);
+        passwordField.setFont(new Font("Arial", Font.PLAIN, 16));
+        passwordField.setPreferredSize(new Dimension(350, 40));
+        passwordField.setMinimumSize(new Dimension(350, 40));
+        passwordField.setEditable(true);
+        passwordField.setEnabled(true);
         passwordField.setToolTipText("Enter your password (default: password)");
         formPanel.add(passwordField, gbc);
         
