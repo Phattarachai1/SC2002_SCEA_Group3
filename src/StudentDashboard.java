@@ -168,12 +168,51 @@ public class StudentDashboard extends JFrame {
         panel.setBackground(new Color(245, 255, 250)); // Very light mint
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Info label at top
+        // Top panel with info and filters
+        JPanel topPanel = new JPanel(new BorderLayout(5, 5));
+        topPanel.setBackground(new Color(245, 255, 250));
+        
+        // Info label
         JLabel infoLabel = new JLabel("<html><b>Available Internships</b> - Browse and apply to internships matching your major and year</html>");
         infoLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         infoLabel.setForeground(new Color(0, 80, 0));
-        infoLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 5));
-        panel.add(infoLabel, BorderLayout.NORTH);
+        infoLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        topPanel.add(infoLabel, BorderLayout.NORTH);
+        
+        // Filter panel
+        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        filterPanel.setBackground(new Color(245, 255, 250));
+        filterPanel.setBorder(BorderFactory.createTitledBorder("Filters"));
+        
+        filterPanel.add(new JLabel("Level:"));
+        JComboBox<String> levelFilter = new JComboBox<>(new String[]{"All", "BASIC", "INTERMEDIATE", "ADVANCED"});
+        levelFilter.setFont(new Font("Arial", Font.PLAIN, 12));
+        filterPanel.add(levelFilter);
+        
+        filterPanel.add(new JLabel("Closing Date:"));
+        JTextField closingDateField = new JTextField(10);
+        closingDateField.setFont(new Font("Arial", Font.PLAIN, 12));
+        closingDateField.setToolTipText("Format: YYYY-MM-DD (leave blank for all)");
+        filterPanel.add(closingDateField);
+        
+        JButton applyFilterBtn = createButton("Apply Filters");
+        applyFilterBtn.addActionListener(e -> {
+            String level = (String) levelFilter.getSelectedItem();
+            String closingDate = closingDateField.getText().trim();
+            refreshInternshipsWithFilters(level, closingDate);
+        });
+        filterPanel.add(applyFilterBtn);
+        
+        JButton clearFilterBtn = createButton("Clear Filters");
+        clearFilterBtn.addActionListener(e -> {
+            levelFilter.setSelectedIndex(0);
+            closingDateField.setText("");
+            refreshInternships();
+        });
+        filterPanel.add(clearFilterBtn);
+        
+        topPanel.add(filterPanel, BorderLayout.SOUTH);
+        panel.add(topPanel, BorderLayout.NORTH);
 
         // Table
         String[] columns = {"ID", "Title", "Company", "Level", "Major", "Slots", "Available", "Opening", "Closing"};
@@ -331,6 +370,60 @@ public class StudentDashboard extends JFrame {
                 i.getOpeningDate(),
                 i.getClosingDate()
             });
+        }
+    }
+
+    private void refreshInternshipsWithFilters(String level, String closingDate) {
+        internshipModel.setRowCount(0);
+        
+        List<Internship> available = internships.stream()
+            .filter(i -> i.isVisible() 
+                      && i.getStatus() == Internship.InternshipStatus.APPROVED
+                      && LocalDate.now().isAfter(i.getOpeningDate().minusDays(1))  
+                      && LocalDate.now().isBefore(i.getClosingDate().plusDays(1))
+                      && i.getConfirmedPlacements() < i.getSlots()
+                      && isEligible(student, i))
+            .collect(Collectors.toList());
+
+        // Apply level filter
+        if (level != null && !level.equals("All")) {
+            available = available.stream()
+                .filter(i -> i.getLevel().toString().equals(level))
+                .collect(Collectors.toList());
+        }
+        
+        // Apply closing date filter
+        if (closingDate != null && !closingDate.isEmpty()) {
+            try {
+                LocalDate filterDate = LocalDate.parse(closingDate);
+                available = available.stream()
+                    .filter(i -> i.getClosingDate().equals(filterDate))
+                    .collect(Collectors.toList());
+            } catch (Exception e) {
+                showError("Invalid date format. Please use YYYY-MM-DD");
+                return;
+            }
+        }
+        
+        // Sort alphabetically by title
+        available.sort((i1, i2) -> i1.getTitle().compareToIgnoreCase(i2.getTitle()));
+
+        for (Internship i : available) {
+            internshipModel.addRow(new Object[]{
+                i.getInternshipID(),
+                i.getTitle(),
+                i.getCompanyName(),
+                i.getLevel(),
+                i.getPreferredMajor(),
+                i.getSlots(),
+                (i.getSlots() - i.getConfirmedPlacements()),
+                i.getOpeningDate(),
+                i.getClosingDate()
+            });
+        }
+        
+        if (available.isEmpty()) {
+            showInfo("No internships found matching your filter criteria.");
         }
     }
 

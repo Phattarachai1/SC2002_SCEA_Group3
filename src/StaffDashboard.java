@@ -203,15 +203,19 @@ public class StaffDashboard extends JFrame {
         btnPanel.setBackground(new Color(235, 250, 235));
         
         JButton authorizeBtn = createButton("Authorize Selected");
+        JButton rejectRepBtn = createButton("Reject Selected");
         JButton refreshBtn = createButton("Refresh");
         
         authorizeBtn.setToolTipText("Click on a PENDING representative row then click to authorize");
+        rejectRepBtn.setToolTipText("Click on a PENDING representative row then click to reject");
         refreshBtn.setToolTipText("Reload the company representatives list");
         
         authorizeBtn.addActionListener(e -> authorizeRep());
+        rejectRepBtn.addActionListener(e -> rejectRep());
         refreshBtn.addActionListener(e -> refreshCompanyReps());
         
         btnPanel.add(authorizeBtn);
+        btnPanel.add(rejectRepBtn);
         btnPanel.add(refreshBtn);
         
         panel.add(btnPanel, BorderLayout.SOUTH);
@@ -224,6 +228,10 @@ public class StaffDashboard extends JFrame {
         panel.setBackground(new Color(245, 255, 250));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        // Top panel with title and filters
+        JPanel topPanel = new JPanel(new BorderLayout(5, 5));
+        topPanel.setBackground(new Color(245, 255, 250));
+        
         JPanel titlePanel = new JPanel(new BorderLayout());
         titlePanel.setBackground(new Color(245, 255, 250));
         
@@ -232,12 +240,54 @@ public class StaffDashboard extends JFrame {
         titleLabel.setForeground(new Color(0, 80, 0));
         titlePanel.add(titleLabel, BorderLayout.NORTH);
         
-        JLabel helpLabel = new JLabel("<html><i>Approve PENDING internships to make them visible to students</i></html>");
+        JLabel helpLabel = new JLabel("<html><i>Approve/Reject PENDING internships. Use filters to find specific internships.</i></html>");
         helpLabel.setFont(new Font("Arial", Font.ITALIC, 11));
         helpLabel.setForeground(new Color(100, 100, 100));
         titlePanel.add(helpLabel, BorderLayout.SOUTH);
         
-        panel.add(titlePanel, BorderLayout.NORTH);
+        topPanel.add(titlePanel, BorderLayout.NORTH);
+        
+        // Filter panel
+        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        filterPanel.setBackground(new Color(245, 255, 250));
+        filterPanel.setBorder(BorderFactory.createTitledBorder("Filters"));
+        
+        filterPanel.add(new JLabel("Status:"));
+        JComboBox<String> statusFilter = new JComboBox<>(new String[]{"All", "PENDING", "APPROVED", "REJECTED", "FILLED"});
+        statusFilter.setFont(new Font("Arial", Font.PLAIN, 12));
+        filterPanel.add(statusFilter);
+        
+        filterPanel.add(new JLabel("Level:"));
+        JComboBox<String> levelFilter = new JComboBox<>(new String[]{"All", "BASIC", "INTERMEDIATE", "ADVANCED"});
+        levelFilter.setFont(new Font("Arial", Font.PLAIN, 12));
+        filterPanel.add(levelFilter);
+        
+        filterPanel.add(new JLabel("Company:"));
+        JTextField companyField = new JTextField(15);
+        companyField.setFont(new Font("Arial", Font.PLAIN, 12));
+        companyField.setToolTipText("Enter company name (partial match)");
+        filterPanel.add(companyField);
+        
+        JButton applyFilterBtn = createButton("Apply Filters");
+        applyFilterBtn.addActionListener(e -> {
+            String status = (String) statusFilter.getSelectedItem();
+            String level = (String) levelFilter.getSelectedItem();
+            String company = companyField.getText().trim();
+            refreshInternshipsWithFilters(status, level, company);
+        });
+        filterPanel.add(applyFilterBtn);
+        
+        JButton clearFilterBtn = createButton("Clear Filters");
+        clearFilterBtn.addActionListener(e -> {
+            statusFilter.setSelectedIndex(0);
+            levelFilter.setSelectedIndex(0);
+            companyField.setText("");
+            refreshInternships();
+        });
+        filterPanel.add(clearFilterBtn);
+        
+        topPanel.add(filterPanel, BorderLayout.SOUTH);
+        panel.add(topPanel, BorderLayout.NORTH);
 
         // Table
         String[] columns = {"ID", "Title", "Company", "Level", "Major", "Slots", "Opening", "Closing", "Status"};
@@ -265,12 +315,15 @@ public class StaffDashboard extends JFrame {
         btnPanel.setBackground(new Color(235, 250, 235));
         
         JButton approveBtn = createButton("Approve Selected");
+        JButton rejectIntBtn = createButton("Reject Selected");
         JButton refreshBtn = createButton("Refresh");
         
         approveBtn.addActionListener(e -> approveInternship());
+        rejectIntBtn.addActionListener(e -> rejectInternship());
         refreshBtn.addActionListener(e -> refreshInternships());
         
         btnPanel.add(approveBtn);
+        btnPanel.add(rejectIntBtn);
         btnPanel.add(refreshBtn);
         
         panel.add(btnPanel, BorderLayout.SOUTH);
@@ -586,6 +639,154 @@ public class StaffDashboard extends JFrame {
             selected.setStatus(Internship.InternshipStatus.APPROVED);
             showInfo("Internship approved successfully!");
             refreshInternships();
+        }
+    }
+
+    private void rejectRep() {
+        int selectedRow = companyRepTable.getSelectedRow();
+        if (selectedRow == -1) {
+            showError("Please click on a company representative row to select it");
+            return;
+        }
+
+        String userId = (String) companyRepModel.getValueAt(selectedRow, 0);
+        CompanyRepresentative rep = companyReps.stream()
+            .filter(r -> r.getUserID().equals(userId))
+            .findFirst()
+            .orElse(null);
+
+        if (rep == null) return;
+
+        if (rep.getStatus() == CompanyRepresentative.ApprovalStatus.REJECTED) {
+            showError("This representative is already rejected");
+            return;
+        }
+
+        if (rep.getStatus() == CompanyRepresentative.ApprovalStatus.APPROVED) {
+            showError("Cannot reject an approved representative");
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "Reject representative:\n" + rep.getName() + "\n" + rep.getCompanyName() + "?",
+            "Confirm Rejection", JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            rep.setStatus(CompanyRepresentative.ApprovalStatus.REJECTED);
+            showInfo("Company representative rejected.");
+            refreshCompanyReps();
+        }
+    }
+
+    private void rejectInternship() {
+        int selectedRow = internshipTable.getSelectedRow();
+        if (selectedRow == -1) {
+            showError("Please select an internship");
+            return;
+        }
+
+        String internshipId = (String) internshipModel.getValueAt(selectedRow, 0);
+        Internship selected = internships.stream()
+            .filter(i -> i.getInternshipID().equals(internshipId))
+            .findFirst()
+            .orElse(null);
+
+        if (selected == null) return;
+
+        if (selected.getStatus() == Internship.InternshipStatus.REJECTED) {
+            showError("This internship is already rejected");
+            return;
+        }
+
+        if (selected.getStatus() == Internship.InternshipStatus.APPROVED) {
+            showError("Cannot reject an approved internship");
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "Reject internship:\n" + selected.getTitle() + "\nCompany: " + 
+            selected.getCompanyName() + "?",
+            "Confirm Rejection", JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            selected.setStatus(Internship.InternshipStatus.REJECTED);
+            showInfo("Internship rejected.");
+            refreshInternships();
+        }
+    }
+
+    private void refreshInternshipsWithFilters(String status, String level, String company) {
+        internshipModel.setRowCount(0);
+        
+        List<Internship> filteredInternships = internships.stream()
+            .sorted((i1, i2) -> {
+                if (i1.getStatus() == Internship.InternshipStatus.PENDING) return -1;
+                if (i2.getStatus() == Internship.InternshipStatus.PENDING) return 1;
+                return 0;
+            })
+            .collect(Collectors.toList());
+
+        // Apply status filter
+        if (status != null && !status.equals("All")) {
+            filteredInternships = filteredInternships.stream()
+                .filter(i -> i.getStatus().toString().equals(status))
+                .collect(Collectors.toList());
+        }
+        
+        // Apply level filter
+        if (level != null && !level.equals("All")) {
+            filteredInternships = filteredInternships.stream()
+                .filter(i -> i.getLevel().toString().equals(level))
+                .collect(Collectors.toList());
+        }
+        
+        // Apply company filter
+        if (company != null && !company.isEmpty()) {
+            filteredInternships = filteredInternships.stream()
+                .filter(i -> i.getCompanyName().toLowerCase().contains(company.toLowerCase()))
+                .collect(Collectors.toList());
+        }
+        
+        for (Internship i : filteredInternships) {
+            String statusText = "<html><b>" + i.getStatus() + "</b></html>";
+            internshipModel.addRow(new Object[]{
+                i.getInternshipID(),
+                i.getTitle(),
+                i.getCompanyName(),
+                i.getLevel(),
+                i.getPreferredMajor(),
+                i.getSlots(),
+                i.getOpeningDate(),
+                i.getClosingDate(),
+                statusText
+            });
+        }
+        
+        // Apply row colors
+        internshipTable.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                java.awt.Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                
+                if (!isSelected) {
+                    String statusStr = internshipModel.getValueAt(row, 8).toString();
+                    if (statusStr.contains("PENDING")) {
+                        c.setBackground(new Color(255, 255, 200)); // Light yellow
+                    } else if (statusStr.contains("APPROVED")) {
+                        c.setBackground(new Color(200, 255, 200)); // Light green
+                    } else if (statusStr.contains("REJECTED")) {
+                        c.setBackground(new Color(255, 200, 200)); // Light red
+                    } else {
+                        c.setBackground(Color.WHITE);
+                    }
+                }
+                return c;
+            }
+        });
+        
+        if (filteredInternships.isEmpty()) {
+            showInfo("No internships found matching your filter criteria.");
         }
     }
 

@@ -168,7 +168,10 @@ public class CompanyDashboard extends JFrame {
         panel.setBackground(new Color(245, 255, 250));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Info panel
+        // Info panel with filters
+        JPanel topPanel = new JPanel(new BorderLayout(5, 5));
+        topPanel.setBackground(new Color(245, 255, 250));
+        
         JPanel infoPanel = new JPanel(new BorderLayout());
         infoPanel.setBackground(new Color(245, 255, 250));
         
@@ -182,7 +185,48 @@ public class CompanyDashboard extends JFrame {
         helpLabel.setForeground(new Color(100, 100, 100));
         infoPanel.add(helpLabel, BorderLayout.SOUTH);
         
-        panel.add(infoPanel, BorderLayout.NORTH);
+        topPanel.add(infoPanel, BorderLayout.NORTH);
+        
+        // Filter panel
+        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        filterPanel.setBackground(new Color(245, 255, 250));
+        filterPanel.setBorder(BorderFactory.createTitledBorder("Filters"));
+        
+        filterPanel.add(new JLabel("Status:"));
+        JComboBox<String> statusFilter = new JComboBox<>(new String[]{"All", "PENDING", "APPROVED", "REJECTED", "FILLED"});
+        statusFilter.setFont(new Font("Arial", Font.PLAIN, 12));
+        filterPanel.add(statusFilter);
+        
+        filterPanel.add(new JLabel("Level:"));
+        JComboBox<String> levelFilter = new JComboBox<>(new String[]{"All", "BASIC", "INTERMEDIATE", "ADVANCED"});
+        levelFilter.setFont(new Font("Arial", Font.PLAIN, 12));
+        filterPanel.add(levelFilter);
+        
+        filterPanel.add(new JLabel("Visibility:"));
+        JComboBox<String> visibilityFilter = new JComboBox<>(new String[]{"All", "Visible", "Hidden"});
+        visibilityFilter.setFont(new Font("Arial", Font.PLAIN, 12));
+        filterPanel.add(visibilityFilter);
+        
+        JButton applyFilterBtn = createButton("Apply Filters");
+        applyFilterBtn.addActionListener(e -> {
+            String status = (String) statusFilter.getSelectedItem();
+            String level = (String) levelFilter.getSelectedItem();
+            String visibility = (String) visibilityFilter.getSelectedItem();
+            refreshInternshipsWithFilters(status, level, visibility);
+        });
+        filterPanel.add(applyFilterBtn);
+        
+        JButton clearFilterBtn = createButton("Clear Filters");
+        clearFilterBtn.addActionListener(e -> {
+            statusFilter.setSelectedIndex(0);
+            levelFilter.setSelectedIndex(0);
+            visibilityFilter.setSelectedIndex(0);
+            refreshInternships();
+        });
+        filterPanel.add(clearFilterBtn);
+        
+        topPanel.add(filterPanel, BorderLayout.SOUTH);
+        panel.add(topPanel, BorderLayout.NORTH);
 
         // Table
         String[] columns = {"ID", "Title", "Level", "Major", "Slots", "Confirmed", "Opening", "Closing", "Status", "Visible"};
@@ -332,6 +376,55 @@ public class CompanyDashboard extends JFrame {
                 i.getStatus(),
                 i.isVisible() ? "Yes" : "No"
             });
+        }
+    }
+
+    private void refreshInternshipsWithFilters(String status, String level, String visibility) {
+        internshipModel.setRowCount(0);
+        
+        List<Internship> myInternships = internships.stream()
+            .filter(i -> i.getCompanyRepInCharge().getUserID().equals(rep.getUserID()))
+            .collect(Collectors.toList());
+
+        // Apply status filter
+        if (status != null && !status.equals("All")) {
+            myInternships = myInternships.stream()
+                .filter(i -> i.getStatus().toString().equals(status))
+                .collect(Collectors.toList());
+        }
+        
+        // Apply level filter
+        if (level != null && !level.equals("All")) {
+            myInternships = myInternships.stream()
+                .filter(i -> i.getLevel().toString().equals(level))
+                .collect(Collectors.toList());
+        }
+        
+        // Apply visibility filter
+        if (visibility != null && !visibility.equals("All")) {
+            boolean showVisible = visibility.equals("Visible");
+            myInternships = myInternships.stream()
+                .filter(i -> i.isVisible() == showVisible)
+                .collect(Collectors.toList());
+        }
+
+        for (Internship i : myInternships) {
+            internshipModel.addRow(new Object[]{
+                i.getInternshipID(),
+                i.getTitle(),
+                i.getLevel(),
+                i.getPreferredMajor(),
+                i.getSlots(),
+                i.getConfirmedPlacements(),
+                i.getOpeningDate(),
+                i.getClosingDate(),
+                i.getStatus(),
+                i.isVisible() ? "Yes" : "No"
+            });
+        }
+        
+        if (myInternships.isEmpty()) {
+            showInfo("No internships found matching your filter criteria.");
         }
     }
 
