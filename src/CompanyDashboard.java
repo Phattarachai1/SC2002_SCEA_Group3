@@ -419,7 +419,7 @@ public class CompanyDashboard extends JFrame {
         levelCombo.setFont(new Font("Arial", Font.PLAIN, 13));
         
         String[] majors = {
-            "Computer Science", "Computer Engineering", "Information Systems",
+            "Computer Science", "Data Science & AI", "Computer Engineering", "Information Engineering & Media",
             "Aerospace Engineering", "Chemical & Biomolecular Engineering",
             "Engineering in Electrical & Electronic", "Mathematical Sciences",
             "Communication Studies", "Business", "Social Sciences",
@@ -585,7 +585,18 @@ public class CompanyDashboard extends JFrame {
         JScrollPane descScroll = new JScrollPane(descArea);
         JComboBox<String> levelCombo = new JComboBox<>(new String[]{"BASIC", "INTERMEDIATE", "ADVANCED"});
         levelCombo.setSelectedItem(selected.getLevel().toString());
-        JTextField majorField = new JTextField(selected.getPreferredMajor());
+        
+        String[] majors = {
+            "Computer Science", "Data Science & AI", "Computer Engineering", "Information Engineering & Media",
+            "Aerospace Engineering", "Chemical & Biomolecular Engineering",
+            "Engineering in Electrical & Electronic", "Mathematical Sciences",
+            "Communication Studies", "Business", "Social Sciences",
+            "Biological Sciences", "Arts"
+        };
+        JComboBox<String> majorCombo = new JComboBox<>(majors);
+        majorCombo.setSelectedItem(selected.getPreferredMajor());
+        majorCombo.setFont(new Font("Arial", Font.PLAIN, 13));
+        
         JTextField slotsField = new JTextField(String.valueOf(selected.getSlots()));
         
         panel.add(createLabel("Title:"));
@@ -595,7 +606,7 @@ public class CompanyDashboard extends JFrame {
         panel.add(createLabel("Level:"));
         panel.add(levelCombo);
         panel.add(createLabel("Preferred Major:"));
-        panel.add(majorField);
+        panel.add(majorCombo);
         panel.add(createLabel("Slots (1-10):"));
         panel.add(slotsField);
 
@@ -607,13 +618,13 @@ public class CompanyDashboard extends JFrame {
                 String title = titleField.getText().trim();
                 String desc = descArea.getText().trim();
                 String levelStr = (String) levelCombo.getSelectedItem();
-                String major = majorField.getText().trim();
+                String major = (String) majorCombo.getSelectedItem();
                 int slots = Integer.parseInt(slotsField.getText().trim());
 
                 if (!title.isEmpty()) selected.setTitle(title);
                 if (!desc.isEmpty()) selected.setDescription(desc);
                 selected.setLevel(Internship.InternshipLevel.valueOf(levelStr));
-                if (!major.isEmpty()) selected.setPreferredMajor(major);
+                if (major != null && !major.isEmpty()) selected.setPreferredMajor(major);
                 if (slots >= 1 && slots <= 10) selected.setSlots(slots);
 
                 showInfo("Internship updated successfully!");
