@@ -63,9 +63,9 @@ public class LoginFrame extends JFrame {
 
         // User ID
         gbc.gridx = 0; gbc.gridy = 0;
-        JLabel userIdLabel = new JLabel("User ID / Email (for Company Rep):");
+        JLabel userIdLabel = new JLabel("<html>User ID /<br>Email (for Company Rep):</html>");
         userIdLabel.setForeground(new Color(0, 80, 0));
-        userIdLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        userIdLabel.setFont(new Font("Arial", Font.BOLD, 13));
         formPanel.add(userIdLabel, gbc);
 
         gbc.gridx = 1;
