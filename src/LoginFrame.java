@@ -63,7 +63,7 @@ public class LoginFrame extends JFrame {
 
         // User ID
         gbc.gridx = 0; gbc.gridy = 0;
-        JLabel userIdLabel = new JLabel("User ID / Email (for Company Rep):");
+        JLabel userIdLabel = new JLabel("<html>User ID / Email:</html>");
         userIdLabel.setForeground(new Color(0, 80, 0));
         userIdLabel.setFont(new Font("Arial", Font.BOLD, 13));
         formPanel.add(userIdLabel, gbc);
@@ -102,6 +102,13 @@ public class LoginFrame extends JFrame {
         infoLabel.setFont(new Font("Arial", Font.ITALIC, 11));
         infoLabel.setForeground(new Color(100, 100, 100));
         formPanel.add(infoLabel, gbc);
+        
+        // Email info label (on separate row)
+        gbc.gridy = 3;
+        JLabel emailLabel = new JLabel("<html><center><i>For company representatives, please log in with email as the User ID</i></center></html>");
+        emailLabel.setFont(new Font("Arial", Font.ITALIC, 11));
+        emailLabel.setForeground(new Color(139, 0, 0)); // Dark red
+        formPanel.add(emailLabel, gbc);
 
         mainPanel.add(formPanel, BorderLayout.CENTER);
 
