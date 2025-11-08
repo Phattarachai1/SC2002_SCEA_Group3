@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"sc2002_grpproject.boundary"},{"l":"sc2002_grpproject.controller"},{"l":"sc2002_grpproject.entity"},{"l":"sc2002_grpproject.enums"},{"l":"sc2002_grpproject.main"},{"l":"sc2002_grpproject.utils"}];updateSearchResults();
