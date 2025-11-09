@@ -1,7 +1,7 @@
 package sc2002_grpproject.boundary.student;
 
 import sc2002_grpproject.entity.*;
-import sc2002_grpproject.enums.Enums.*;
+import sc2002_grpproject.enums.*;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;

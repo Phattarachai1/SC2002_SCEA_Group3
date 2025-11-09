@@ -1,10 +1,11 @@
 package sc2002_grpproject.boundary.staff;
 
 import sc2002_grpproject.entity.*;
-import sc2002_grpproject.enums.Enums.*;
+import sc2002_grpproject.enums.*;
 import sc2002_grpproject.boundary.RoundedButton;
 import sc2002_grpproject.boundary.LoginFrame;
 import sc2002_grpproject.controller.AuthController;
+import sc2002_grpproject.controller.result.PasswordChangeResult;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -456,7 +457,7 @@ public class StaffDashboard extends JFrame {
                 return;
             }
 
-            AuthController.PasswordChangeResult pwdResult = 
+            PasswordChangeResult pwdResult = 
                 AuthController.changePassword(staff, current, newPass);
 
             if (pwdResult.isSuccess()) {

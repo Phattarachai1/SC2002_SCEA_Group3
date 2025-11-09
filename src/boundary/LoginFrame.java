@@ -1,7 +1,7 @@
 package sc2002_grpproject.boundary;
 
 import sc2002_grpproject.entity.*;
-import sc2002_grpproject.enums.Enums.*;
+import sc2002_grpproject.enums.*;
 import sc2002_grpproject.boundary.company.CompanyDashboard;
 import sc2002_grpproject.boundary.student.StudentDashboard;
 import sc2002_grpproject.boundary.staff.StaffDashboard;

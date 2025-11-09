@@ -1,7 +1,7 @@
 package sc2002_grpproject.main;
 
 import sc2002_grpproject.entity.*;
-import sc2002_grpproject.enums.Enums.*;
+import sc2002_grpproject.enums.*;
 import sc2002_grpproject.utils.DataManager;
 import sc2002_grpproject.boundary.LoginFrame;
 import javax.swing.*;

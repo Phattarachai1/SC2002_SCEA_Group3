@@ -1,6 +1,8 @@
 package sc2002_grpproject.controller;
 
 import sc2002_grpproject.entity.*;
+import sc2002_grpproject.controller.result.AuthResult;
+import sc2002_grpproject.controller.result.PasswordChangeResult;
 import java.util.List;
 
 /**
@@ -85,53 +87,5 @@ public class AuthController {
      */
     public static boolean isStaff(User user) {
         return user instanceof CareerCenterStaff;
-    }
-    
-    /**
-     * Result class for authentication operations
-     */
-    public static class AuthResult {
-        private final boolean success;
-        private final User user;
-        private final String message;
-        
-        public AuthResult(boolean success, User user, String message) {
-            this.success = success;
-            this.user = user;
-            this.message = message;
-        }
-        
-        public boolean isSuccess() {
-            return success;
-        }
-        
-        public User getUser() {
-            return user;
-        }
-        
-        public String getMessage() {
-            return message;
-        }
-    }
-    
-    /**
-     * Result class for password change operations
-     */
-    public static class PasswordChangeResult {
-        private final boolean success;
-        private final String message;
-        
-        public PasswordChangeResult(boolean success, String message) {
-            this.success = success;
-            this.message = message;
-        }
-        
-        public boolean isSuccess() {
-            return success;
-        }
-        
-        public String getMessage() {
-            return message;
-        }
     }
 }

@@ -1,6 +1,6 @@
 package sc2002_grpproject.entity;
 
-import sc2002_grpproject.enums.Enums.ApplicationStatus;
+import sc2002_grpproject.enums.ApplicationStatus;
 
 /**
  * Represents a student's application for an internship.

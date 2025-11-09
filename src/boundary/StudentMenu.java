@@ -1,7 +1,7 @@
 package sc2002_grpproject.boundary;
 
 import sc2002_grpproject.entity.*;
-import sc2002_grpproject.enums.Enums.*;
+import sc2002_grpproject.enums.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;

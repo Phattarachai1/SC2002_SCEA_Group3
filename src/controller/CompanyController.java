@@ -1,7 +1,11 @@
 package sc2002_grpproject.controller;
 
 import sc2002_grpproject.entity.*;
-import sc2002_grpproject.enums.Enums.*;
+import sc2002_grpproject.enums.InternshipLevel;
+import sc2002_grpproject.enums.InternshipStatus;
+import sc2002_grpproject.enums.ApplicationStatus;
+import sc2002_grpproject.controller.result.PostingResult;
+import sc2002_grpproject.controller.result.CompanyApplicationResult;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -185,11 +189,11 @@ public class CompanyController {
     /**
      * Approve an application
      */
-    public static ApplicationResult approveApplication(InternshipApplication application, Internship internship,
+    public static CompanyApplicationResult approveApplication(InternshipApplication application, Internship internship,
                                                        List<InternshipApplication> allApplications) {
         // Check if application is pending
         if (application.getStatus() != ApplicationStatus.PENDING) {
-            return new ApplicationResult(false, "Can only approve pending applications.");
+            return new CompanyApplicationResult(false, "Can only approve pending applications.");
         }
         
         // Calculate available slots = total slots - SUCCESSFUL applications (regardless of confirmation)
@@ -201,69 +205,27 @@ public class CompanyController {
         long availableSlots = internship.getSlots() - successfulApps;
         
         if (availableSlots <= 0) {
-            return new ApplicationResult(false, "No available slots for this internship.");
+            return new CompanyApplicationResult(false, "No available slots for this internship.");
         }
         
         // Approve application
         application.setStatus(ApplicationStatus.SUCCESSFUL);
         
-        return new ApplicationResult(true, "Application approved successfully!");
+        return new CompanyApplicationResult(true, "Application approved successfully!");
     }
     
     /**
      * Reject an application
      */
-    public static ApplicationResult rejectApplication(InternshipApplication application) {
+    public static CompanyApplicationResult rejectApplication(InternshipApplication application) {
         // Check if application is pending
         if (application.getStatus() != ApplicationStatus.PENDING) {
-            return new ApplicationResult(false, "Can only reject pending applications.");
+            return new CompanyApplicationResult(false, "Can only reject pending applications.");
         }
         
         // Reject application
         application.setStatus(ApplicationStatus.UNSUCCESSFUL);
         
-        return new ApplicationResult(true, "Application rejected.");
-    }
-    
-    /**
-     * Result class for posting operations
-     */
-    public static class PostingResult {
-        private final boolean success;
-        private final String message;
-        
-        public PostingResult(boolean success, String message) {
-            this.success = success;
-            this.message = message;
-        }
-        
-        public boolean isSuccess() {
-            return success;
-        }
-        
-        public String getMessage() {
-            return message;
-        }
-    }
-    
-    /**
-     * Result class for application operations
-     */
-    public static class ApplicationResult {
-        private final boolean success;
-        private final String message;
-        
-        public ApplicationResult(boolean success, String message) {
-            this.success = success;
-            this.message = message;
-        }
-        
-        public boolean isSuccess() {
-            return success;
-        }
-        
-        public String getMessage() {
-            return message;
-        }
+        return new CompanyApplicationResult(true, "Application rejected.");
     }
 }

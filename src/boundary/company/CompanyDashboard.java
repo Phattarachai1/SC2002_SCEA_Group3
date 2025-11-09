@@ -1,7 +1,7 @@
 package sc2002_grpproject.boundary.company;
 
 import sc2002_grpproject.entity.*;
-import sc2002_grpproject.enums.Enums.*;
+import sc2002_grpproject.enums.*;
 import sc2002_grpproject.boundary.RoundedButton;
 import sc2002_grpproject.boundary.LoginFrame;
 import sc2002_grpproject.controller.AuthController;

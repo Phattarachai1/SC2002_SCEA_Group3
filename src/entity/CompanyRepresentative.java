@@ -1,7 +1,7 @@
 package sc2002_grpproject.entity;
 
-import sc2002_grpproject.enums.Enums.ApprovalStatus;
-import sc2002_grpproject.enums.Enums.InternshipStatus;
+import sc2002_grpproject.enums.ApprovalStatus;
+import sc2002_grpproject.enums.InternshipStatus;
 import java.time.LocalDate;
 import java.util.List;
 

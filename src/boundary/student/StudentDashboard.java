@@ -1,10 +1,11 @@
 package sc2002_grpproject.boundary.student;
 
 import sc2002_grpproject.entity.*;
-import sc2002_grpproject.enums.Enums.*;
+import sc2002_grpproject.enums.*;
 import sc2002_grpproject.boundary.RoundedButton;
 import sc2002_grpproject.boundary.LoginFrame;
 import sc2002_grpproject.controller.AuthController;
+import sc2002_grpproject.controller.result.PasswordChangeResult;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -217,7 +218,7 @@ public class StudentDashboard extends JFrame {
                 return;
             }
             
-            AuthController.PasswordChangeResult result = 
+            PasswordChangeResult result = 
                 AuthController.changePassword(student, oldPassword, newPassword);
             
             if (result.isSuccess()) {

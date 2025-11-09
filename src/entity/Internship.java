@@ -1,7 +1,7 @@
 package sc2002_grpproject.entity;
 
-import sc2002_grpproject.enums.Enums.InternshipLevel;
-import sc2002_grpproject.enums.Enums.InternshipStatus;
+import sc2002_grpproject.enums.InternshipLevel;
+import sc2002_grpproject.enums.InternshipStatus;
 import java.time.LocalDate;
 
 /**

@@ -1,7 +1,10 @@
 package sc2002_grpproject.controller;
 
 import sc2002_grpproject.entity.*;
-import sc2002_grpproject.enums.Enums.*;
+import sc2002_grpproject.enums.InternshipLevel;
+import sc2002_grpproject.enums.InternshipStatus;
+import sc2002_grpproject.enums.ApplicationStatus;
+import sc2002_grpproject.controller.result.StudentApplicationResult;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,16 +65,16 @@ public class StudentController {
     /**
      * Apply for an internship
      */
-    public static ApplicationResult applyForInternship(Student student, Internship internship, 
+    public static StudentApplicationResult applyForInternship(Student student, Internship internship, 
                                                       List<InternshipApplication> allApplications) {
         // Check if internship is FILLED
         if (internship.getStatus() == InternshipStatus.FILLED) {
-            return new ApplicationResult(false, "This internship is already filled.");
+            return new StudentApplicationResult(false, "This internship is already filled.");
         }
         
         // Check if past closing date
         if (LocalDate.now().isAfter(internship.getClosingDate())) {
-            return new ApplicationResult(false, "This internship has passed its closing date.");
+            return new StudentApplicationResult(false, "This internship has passed its closing date.");
         }
         
         // Check if already applied
@@ -80,7 +83,7 @@ public class StudentController {
                           && app.getInternship().getInternshipID().equals(internship.getInternshipID()));
         
         if (alreadyApplied) {
-            return new ApplicationResult(false, "You have already applied for this internship.");
+            return new StudentApplicationResult(false, "You have already applied for this internship.");
         }
         
         // Check if student has an accepted placement
@@ -90,7 +93,7 @@ public class StudentController {
                           && app.isPlacementConfirmed());
         
         if (hasAcceptedPlacement) {
-            return new ApplicationResult(false, "You have already accepted a placement and cannot apply to other internships.");
+            return new StudentApplicationResult(false, "You have already accepted a placement and cannot apply to other internships.");
         }
         
         // Check if already has 5 pending applications
@@ -100,24 +103,24 @@ public class StudentController {
             .count();
         
         if (pendingCount >= 5) {
-            return new ApplicationResult(false, "You have reached the maximum of 5 pending applications.");
+            return new StudentApplicationResult(false, "You have reached the maximum of 5 pending applications.");
         }
         
         // Check if internship is still available
         if (internship.getConfirmedPlacements() >= internship.getSlots()) {
-            return new ApplicationResult(false, "This internship is already filled.");
+            return new StudentApplicationResult(false, "This internship is already filled.");
         }
         
         // Check eligibility
         if (!isEligible(student, internship)) {
-            return new ApplicationResult(false, "You are not eligible for this internship level.");
+            return new StudentApplicationResult(false, "You are not eligible for this internship level.");
         }
         
         // Create new application
         InternshipApplication newApp = new InternshipApplication(student, internship);
         allApplications.add(newApp);
         
-        return new ApplicationResult(true, "Application submitted successfully!");
+        return new StudentApplicationResult(true, "Application submitted successfully!");
     }
     
     /**
@@ -133,16 +136,16 @@ public class StudentController {
     /**
      * Accept an internship placement
      */
-    public static ApplicationResult acceptPlacement(Student student, InternshipApplication application,
+    public static StudentApplicationResult acceptPlacement(Student student, InternshipApplication application,
                                                    List<InternshipApplication> allApplications) {
         // Check if application is successful
         if (application.getStatus() != ApplicationStatus.SUCCESSFUL) {
-            return new ApplicationResult(false, "Can only accept SUCCESSFUL placements.");
+            return new StudentApplicationResult(false, "Can only accept SUCCESSFUL placements.");
         }
         
         // Check if already accepted
         if (application.isPlacementConfirmed()) {
-            return new ApplicationResult(false, "You have already accepted this placement.");
+            return new StudentApplicationResult(false, "You have already accepted this placement.");
         }
         
         // Check if student has another accepted placement
@@ -153,7 +156,7 @@ public class StudentController {
                           && app.isPlacementConfirmed());
         
         if (hasOtherAcceptedPlacement) {
-            return new ApplicationResult(false, "You have already accepted another placement.");
+            return new StudentApplicationResult(false, "You have already accepted another placement.");
         }
         
         // Accept the placement
@@ -162,20 +165,20 @@ public class StudentController {
         // Update internship confirmed placements
         application.getInternship().incrementConfirmedPlacements();
         
-        return new ApplicationResult(true, "Placement accepted successfully!");
+        return new StudentApplicationResult(true, "Placement accepted successfully!");
     }
     
     /**
      * Request withdrawal from an application
      */
-    public static ApplicationResult requestWithdrawal(Student student, InternshipApplication application) {
+    public static StudentApplicationResult requestWithdrawal(Student student, InternshipApplication application) {
         // Check if application can be withdrawn
         if (application.getStatus() == ApplicationStatus.WITHDRAWN) {
-            return new ApplicationResult(false, "This application is already withdrawn.");
+            return new StudentApplicationResult(false, "This application is already withdrawn.");
         }
         
         if (application.getStatus() == ApplicationStatus.UNSUCCESSFUL) {
-            return new ApplicationResult(false, "Cannot withdraw an unsuccessful application.");
+            return new StudentApplicationResult(false, "Cannot withdraw an unsuccessful application.");
         }
         
         // If placement was confirmed, decrement the confirmed placements
@@ -187,7 +190,7 @@ public class StudentController {
         application.setStatus(ApplicationStatus.WITHDRAWN);
         application.setWithdrawalRequested(true);
         
-        return new ApplicationResult(true, "Withdrawal request submitted successfully!");
+        return new StudentApplicationResult(true, "Withdrawal request submitted successfully!");
     }
     
     /**
@@ -209,26 +212,5 @@ public class StudentController {
             .filter(app -> app.getStatus() == ApplicationStatus.SUCCESSFUL)
             .filter(app -> !app.isPlacementConfirmed())
             .count();
-    }
-    
-    /**
-     * Result class for application operations
-     */
-    public static class ApplicationResult {
-        private final boolean success;
-        private final String message;
-        
-        public ApplicationResult(boolean success, String message) {
-            this.success = success;
-            this.message = message;
-        }
-        
-        public boolean isSuccess() {
-            return success;
-        }
-        
-        public String getMessage() {
-            return message;
-        }
     }
 }

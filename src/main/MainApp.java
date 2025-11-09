@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 import sc2002_grpproject.utils.DataManager;
 import sc2002_grpproject.boundary.*;
 import sc2002_grpproject.entity.*;
-import sc2002_grpproject.enums.Enums.*;
+import sc2002_grpproject.enums.*;
 
 /**
  * Console-based main application for the Internship Placement Management System.

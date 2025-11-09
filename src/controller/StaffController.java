@@ -1,7 +1,12 @@
 package sc2002_grpproject.controller;
 
 import sc2002_grpproject.entity.*;
-import sc2002_grpproject.enums.Enums.*;
+import sc2002_grpproject.enums.InternshipLevel;
+import sc2002_grpproject.enums.InternshipStatus;
+import sc2002_grpproject.enums.ApprovalStatus;
+import sc2002_grpproject.controller.result.ApprovalResult;
+import sc2002_grpproject.controller.stats.InternshipStats;
+import sc2002_grpproject.controller.stats.RepresentativeStats;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -146,94 +151,5 @@ public class StaffController {
             .count();
         
         return new RepresentativeStats(pending, approved, rejected);
-    }
-    
-    /**
-     * Result class for approval operations
-     */
-    public static class ApprovalResult {
-        private final boolean success;
-        private final String message;
-        
-        public ApprovalResult(boolean success, String message) {
-            this.success = success;
-            this.message = message;
-        }
-        
-        public boolean isSuccess() {
-            return success;
-        }
-        
-        public String getMessage() {
-            return message;
-        }
-    }
-    
-    /**
-     * Statistics class for internships
-     */
-    public static class InternshipStats {
-        private final long pending;
-        private final long approved;
-        private final long rejected;
-        private final long filled;
-        
-        public InternshipStats(long pending, long approved, long rejected, long filled) {
-            this.pending = pending;
-            this.approved = approved;
-            this.rejected = rejected;
-            this.filled = filled;
-        }
-        
-        public long getPending() {
-            return pending;
-        }
-        
-        public long getApproved() {
-            return approved;
-        }
-        
-        public long getRejected() {
-            return rejected;
-        }
-        
-        public long getFilled() {
-            return filled;
-        }
-        
-        public long getTotal() {
-            return pending + approved + rejected + filled;
-        }
-    }
-    
-    /**
-     * Statistics class for company representatives
-     */
-    public static class RepresentativeStats {
-        private final long pending;
-        private final long approved;
-        private final long rejected;
-        
-        public RepresentativeStats(long pending, long approved, long rejected) {
-            this.pending = pending;
-            this.approved = approved;
-            this.rejected = rejected;
-        }
-        
-        public long getPending() {
-            return pending;
-        }
-        
-        public long getApproved() {
-            return approved;
-        }
-        
-        public long getRejected() {
-            return rejected;
-        }
-        
-        public long getTotal() {
-            return pending + approved + rejected;
-        }
     }
 }
