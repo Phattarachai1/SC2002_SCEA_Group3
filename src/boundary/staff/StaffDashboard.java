@@ -220,7 +220,7 @@ public class StaffDashboard extends JFrame {
         titleLabel.setForeground(new Color(0, 80, 0));
         panel.add(titleLabel, BorderLayout.NORTH);
 
-        String[] columns = {"App ID", "Student", "Internship", "Company", "Status", "Withdrawal Status"};
+        String[] columns = {"App ID", "Student", "Internship", "Company", "Status", "Confirmed"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -243,7 +243,7 @@ public class StaffDashboard extends JFrame {
                 app.getInternship().getTitle(),
                 app.getInternship().getCompanyName(),
                 app.getStatus(),
-                app.getWithdrawalStatus()
+                app.isPlacementConfirmed() ? "Yes" : "No"
             });
         }
         
@@ -269,7 +269,7 @@ public class StaffDashboard extends JFrame {
                         app.getInternship().getTitle(),
                         app.getInternship().getCompanyName(),
                         app.getStatus(),
-                        app.getWithdrawalStatus()
+                        app.isPlacementConfirmed() ? "Yes" : "No"
                     });
                 }
             } else {
@@ -296,7 +296,7 @@ public class StaffDashboard extends JFrame {
                         app.getInternship().getTitle(),
                         app.getInternship().getCompanyName(),
                         app.getStatus(),
-                        app.getWithdrawalStatus()
+                        app.isPlacementConfirmed() ? "Yes" : "No"
                     });
                 }
             } else {
