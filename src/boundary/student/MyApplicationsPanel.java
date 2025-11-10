@@ -49,7 +49,7 @@ public class MyApplicationsPanel extends JPanel {
     }
 
     private void createTable() {
-        String[] columns = {"App ID", "Internship", "Company", "Status", "Confirmed", "Withdrawal Requested"};
+        String[] columns = {"App ID", "Internship", "Company", "Status", "Confirmed", "Withdrawal Status"};
         applicationModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -133,7 +133,7 @@ public class MyApplicationsPanel extends JPanel {
                 app.getInternship().getCompanyName(),
                 statusText,
                 app.isPlacementConfirmed() ? "Yes" : "No",
-                app.isWithdrawalRequested() ? "Yes" : "No"
+                app.getWithdrawalStatus()
             });
         }
         

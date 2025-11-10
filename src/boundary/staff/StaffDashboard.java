@@ -111,7 +111,7 @@ public class StaffDashboard extends JFrame {
             .filter(i -> i.getStatus() == InternshipStatus.PENDING)
             .count();
         long pendingWithdrawals = applications.stream()
-            .filter(app -> app.isWithdrawalRequested())
+            .filter(app -> "PENDING".equals(app.getWithdrawalStatus()))
             .count();
         
         if (pendingReps == 0 && pendingInternships == 0 && pendingWithdrawals == 0) {
@@ -220,7 +220,7 @@ public class StaffDashboard extends JFrame {
         titleLabel.setForeground(new Color(0, 80, 0));
         panel.add(titleLabel, BorderLayout.NORTH);
 
-        String[] columns = {"App ID", "Student", "Internship", "Company", "Status"};
+        String[] columns = {"App ID", "Student", "Internship", "Company", "Status", "Withdrawal Status"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -233,7 +233,7 @@ public class StaffDashboard extends JFrame {
         
         // Populate withdrawals
         List<InternshipApplication> withdrawals = applications.stream()
-            .filter(app -> app.isWithdrawalRequested())
+            .filter(app -> "PENDING".equals(app.getWithdrawalStatus()))
             .collect(Collectors.toList());
             
         for (InternshipApplication app : withdrawals) {
@@ -242,7 +242,8 @@ public class StaffDashboard extends JFrame {
                 app.getStudent().getName(),
                 app.getInternship().getTitle(),
                 app.getInternship().getCompanyName(),
-                app.getStatus()
+                app.getStatus(),
+                app.getWithdrawalStatus()
             });
         }
         
@@ -259,7 +260,7 @@ public class StaffDashboard extends JFrame {
                 // Refresh
                 model.setRowCount(0);
                 List<InternshipApplication> w = applications.stream()
-                    .filter(app -> app.isWithdrawalRequested())
+                    .filter(app -> "PENDING".equals(app.getWithdrawalStatus()))
                     .collect(Collectors.toList());
                 for (InternshipApplication app : w) {
                     model.addRow(new Object[]{
@@ -267,7 +268,8 @@ public class StaffDashboard extends JFrame {
                         app.getStudent().getName(),
                         app.getInternship().getTitle(),
                         app.getInternship().getCompanyName(),
-                        app.getStatus()
+                        app.getStatus(),
+                        app.getWithdrawalStatus()
                     });
                 }
             } else {
@@ -275,6 +277,34 @@ public class StaffDashboard extends JFrame {
             }
         });
         btnPanel.add(approveBtn);
+        
+        JButton rejectBtn = createButton("Reject Selected");
+        rejectBtn.addActionListener(e -> {
+            int sel = table.getSelectedRow();
+            if (sel != -1) {
+                String appId = (String) model.getValueAt(sel, 0);
+                actionHandler.rejectWithdrawal(appId);
+                // Refresh
+                model.setRowCount(0);
+                List<InternshipApplication> w = applications.stream()
+                    .filter(app -> "PENDING".equals(app.getWithdrawalStatus()))
+                    .collect(Collectors.toList());
+                for (InternshipApplication app : w) {
+                    model.addRow(new Object[]{
+                        app.getApplicationId(),
+                        app.getStudent().getName(),
+                        app.getInternship().getTitle(),
+                        app.getInternship().getCompanyName(),
+                        app.getStatus(),
+                        app.getWithdrawalStatus()
+                    });
+                }
+            } else {
+                actionHandler.showError("Please select a withdrawal request");
+            }
+        });
+        btnPanel.add(rejectBtn);
+        
         centerPanel.add(btnPanel, BorderLayout.SOUTH);
         
         panel.add(centerPanel, BorderLayout.CENTER);
@@ -387,7 +417,7 @@ public class StaffDashboard extends JFrame {
 
     private void showPendingWithdrawals() {
         List<InternshipApplication> withdrawals = applications.stream()
-            .filter(app -> app.isWithdrawalRequested())
+            .filter(app -> "PENDING".equals(app.getWithdrawalStatus()))
             .collect(Collectors.toList());
         StringBuilder report = new StringBuilder();
         report.append("=== PENDING WITHDRAWALS ===\n\nCount: ").append(withdrawals.size()).append("\n\n");
@@ -420,7 +450,7 @@ public class StaffDashboard extends JFrame {
         report.append("APPLICATIONS: ").append(applications.size()).append("\n\n");
         report.append("Pending Reps: ").append(companyReps.stream().filter(r -> r.getStatus() == ApprovalStatus.PENDING).count()).append("\n");
         report.append("Pending Internships: ").append(internships.stream().filter(i -> i.getStatus() == InternshipStatus.PENDING).count()).append("\n");
-        report.append("Withdrawal Requests: ").append(applications.stream().filter(app -> app.isWithdrawalRequested()).count()).append("\n");
+        report.append("Withdrawal Requests: ").append(applications.stream().filter(app -> "PENDING".equals(app.getWithdrawalStatus())).count()).append("\n");
         showReport("Full System Report", report.toString());
     }
 

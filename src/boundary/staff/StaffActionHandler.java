@@ -167,8 +167,8 @@ public class StaffActionHandler {
             return;
         }
 
-        if (!application.isWithdrawalRequested()) {
-            showError("No withdrawal request found for this application");
+        if (!"PENDING".equals(application.getWithdrawalStatus())) {
+            showError("No pending withdrawal request found for this application");
             return;
         }
 
@@ -178,11 +178,42 @@ public class StaffActionHandler {
             "Confirm Withdrawal", JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
+            // If placement was confirmed, decrement the confirmed placements
+            if (application.isPlacementConfirmed()) {
+                application.getInternship().decrementConfirmedPlacements();
+            }
+            
             application.setStatus(ApplicationStatus.WITHDRAWN);
-            application.setWithdrawalRequested(false);
-            Internship internship = application.getInternship();
-            internship.decrementConfirmedPlacements();
+            application.setWithdrawalStatus("APPROVED");
             showSuccess("Withdrawal approved. Placement slot released.");
+        }
+    }
+
+    public void rejectWithdrawal(String applicationId) {
+        InternshipApplication application = applications.stream()
+            .filter(app -> app.getApplicationId().equals(applicationId))
+            .findFirst()
+            .orElse(null);
+
+        if (application == null) {
+            showError("Application not found");
+            return;
+        }
+
+        if (!"PENDING".equals(application.getWithdrawalStatus())) {
+            showError("No pending withdrawal request found for this application");
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(parentFrame,
+            "Reject withdrawal request:\nStudent: " + application.getStudent().getName() +
+            "\nInternship: " + application.getInternship().getTitle() + "?",
+            "Confirm Rejection", JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            // Application status remains unchanged
+            application.setWithdrawalStatus("REJECTED");
+            showSuccess("Withdrawal request rejected. Student will be notified.");
         }
     }
 

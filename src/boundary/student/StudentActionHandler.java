@@ -127,8 +127,15 @@ public class StudentActionHandler {
             return;
         }
 
-        if (selected.isWithdrawalRequested()) {
-            showError("Withdrawal already requested for this application.");
+        String withdrawalStatus = selected.getWithdrawalStatus();
+        if (withdrawalStatus != null && !withdrawalStatus.equals("-")) {
+            if (withdrawalStatus.equals("PENDING")) {
+                showError("Withdrawal already requested for this application.");
+            } else if (withdrawalStatus.equals("APPROVED")) {
+                showError("Withdrawal has already been approved.");
+            } else if (withdrawalStatus.equals("REJECTED")) {
+                showError("Your previous withdrawal request was rejected. You cannot request withdrawal again.");
+            }
             return;
         }
 
@@ -138,7 +145,7 @@ public class StudentActionHandler {
             "Confirm Withdrawal Request", JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
-            selected.setWithdrawalRequested(true);
+            selected.setWithdrawalStatus("PENDING");
             showInfo("Withdrawal request submitted.\nAwaiting Career Center Staff approval.");
         }
     }

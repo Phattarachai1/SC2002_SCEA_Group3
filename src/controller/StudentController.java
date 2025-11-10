@@ -181,14 +181,20 @@ public class StudentController {
             return new StudentApplicationResult(false, "Cannot withdraw an unsuccessful application.");
         }
         
-        // If placement was confirmed, decrement the confirmed placements
-        if (application.isPlacementConfirmed()) {
-            application.getInternship().decrementConfirmedPlacements();
+        // Check if withdrawal status prevents new withdrawal request
+        String withdrawalStatus = application.getWithdrawalStatus();
+        if (withdrawalStatus != null && !withdrawalStatus.equals("-")) {
+            if (withdrawalStatus.equals("PENDING")) {
+                return new StudentApplicationResult(false, "A withdrawal request is already pending.");
+            } else if (withdrawalStatus.equals("APPROVED")) {
+                return new StudentApplicationResult(false, "Withdrawal has already been approved.");
+            } else if (withdrawalStatus.equals("REJECTED")) {
+                return new StudentApplicationResult(false, "Your previous withdrawal request was rejected. You cannot request withdrawal again.");
+            }
         }
         
-        // Request withdrawal
-        application.setStatus(ApplicationStatus.WITHDRAWN);
-        application.setWithdrawalRequested(true);
+        // Request withdrawal - set status to PENDING, do NOT change application status
+        application.setWithdrawalStatus("PENDING");
         
         return new StudentApplicationResult(true, "Withdrawal request submitted successfully!");
     }

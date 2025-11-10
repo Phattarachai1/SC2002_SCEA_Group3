@@ -12,7 +12,7 @@ public class InternshipApplication {
     private Student student;
     private Internship internship;
     private ApplicationStatus status;
-    private boolean withdrawalRequested;
+    private String withdrawalStatus;  // null/"-", "PENDING", "APPROVED", "REJECTED"
     private boolean placementConfirmed;
 
     /**
@@ -27,7 +27,7 @@ public class InternshipApplication {
         this.student = student;
         this.internship = internship;
         this.status = ApplicationStatus.PENDING;
-        this.withdrawalRequested = false;
+        this.withdrawalStatus = "-";
         this.placementConfirmed = false;
     }
 
@@ -36,14 +36,14 @@ public class InternshipApplication {
     public Student getStudent() { return student; }
     public Internship getInternship() { return internship; }
     public ApplicationStatus getStatus() { return status; }
-    public boolean isWithdrawalRequested() { return withdrawalRequested; }
+    public String getWithdrawalStatus() { return withdrawalStatus; }
     public boolean isPlacementConfirmed() { return placementConfirmed; }
 
     // Setters
     public void setStatus(ApplicationStatus status) { this.status = status; }
     
-    public void setWithdrawalRequested(boolean withdrawalRequested) { 
-        this.withdrawalRequested = withdrawalRequested; 
+    public void setWithdrawalStatus(String withdrawalStatus) { 
+        this.withdrawalStatus = withdrawalStatus; 
     }
     
     public void setPlacementConfirmed(boolean placementConfirmed) { 

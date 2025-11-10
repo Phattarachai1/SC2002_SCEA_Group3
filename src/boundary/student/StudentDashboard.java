@@ -123,8 +123,11 @@ public class StudentDashboard extends JFrame {
         long withdrawn = studentApps.stream()
             .filter(app -> app.getStatus() == ApplicationStatus.WITHDRAWN)
             .count();
+        long withdrawalRejected = studentApps.stream()
+            .filter(app -> "REJECTED".equals(app.getWithdrawalStatus()))
+            .count();
         
-        if (approved == 0 && rejected == 0 && withdrawn == 0) {
+        if (approved == 0 && rejected == 0 && withdrawn == 0 && withdrawalRejected == 0) {
             return null;
         }
         
@@ -158,6 +161,12 @@ public class StudentDashboard extends JFrame {
             withdrawnLabel.setFont(new Font("Arial", Font.BOLD, 13));
             withdrawnLabel.setForeground(new Color(150, 75, 0));
             panel.add(withdrawnLabel);
+        }
+        if (withdrawalRejected > 0) {
+            JLabel withdrawalRejectedLabel = new JLabel("⊘ " + withdrawalRejected + " withdrawal request(s) DENIED");
+            withdrawalRejectedLabel.setFont(new Font("Arial", Font.BOLD, 13));
+            withdrawalRejectedLabel.setForeground(new Color(180, 0, 100));
+            panel.add(withdrawalRejectedLabel);
         }
         
         JLabel infoLabel = new JLabel("→ Check 'My Applications' tab for details");
