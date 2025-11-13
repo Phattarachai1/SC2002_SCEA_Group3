@@ -6,6 +6,7 @@ import sc2002_grpproject.enums.InternshipStatus;
 import sc2002_grpproject.enums.ApplicationStatus;
 import sc2002_grpproject.controller.result.StudentApplicationResult;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,7 @@ public class StudentController {
     public static List<Internship> filterByLevel(List<Internship> internships, InternshipLevel level) {
         return internships.stream()
             .filter(i -> i.getLevel() == level)
+            .sorted(Comparator.comparing(Internship::getTitle))
             .collect(Collectors.toList());
     }
     
@@ -39,6 +41,7 @@ public class StudentController {
     public static List<Internship> filterByStatus(List<Internship> internships, InternshipStatus status) {
         return internships.stream()
             .filter(i -> i.getStatus() == status)
+            .sorted(Comparator.comparing(Internship::getTitle))
             .collect(Collectors.toList());
     }
     
@@ -48,6 +51,7 @@ public class StudentController {
     public static List<Internship> filterByClosingDate(List<Internship> internships, LocalDate beforeDate) {
         return internships.stream()
             .filter(i -> i.getClosingDate().isBefore(beforeDate.plusDays(1)))
+            .sorted(Comparator.comparing(Internship::getTitle))
             .collect(Collectors.toList());
     }
     
@@ -55,6 +59,11 @@ public class StudentController {
      * Check if a student is eligible for an internship
      */
     public static boolean isEligible(Student student, Internship internship) {
+        // Check if student's major matches internship's preferred major
+        if (!student.getMajor().equalsIgnoreCase(internship.getPreferredMajor())) {
+            return false;
+        }
+        
         // Year 1-2 students can only apply for BASIC internships
         if (student.getYearOfStudy() <= 2 && internship.getLevel() != InternshipLevel.BASIC) {
             return false;
@@ -96,14 +105,14 @@ public class StudentController {
             return new StudentApplicationResult(false, "You have already accepted a placement and cannot apply to other internships.");
         }
         
-        // Check if already has 5 pending applications
+        // Check if already has 3 pending applications
         long pendingCount = allApplications.stream()
             .filter(app -> app.getStudent().getUserID().equals(student.getUserID()))
             .filter(app -> app.getStatus() == ApplicationStatus.PENDING)
             .count();
         
-        if (pendingCount >= 5) {
-            return new StudentApplicationResult(false, "You have reached the maximum of 5 pending applications.");
+        if (pendingCount >= 3) {
+            return new StudentApplicationResult(false, "You have reached the maximum of 3 pending applications.");
         }
         
         // Check if internship is still available
@@ -165,7 +174,17 @@ public class StudentController {
         // Update internship confirmed placements
         application.getInternship().incrementConfirmedPlacements();
         
-        return new StudentApplicationResult(true, "Placement accepted successfully!");
+        // Automatically withdraw all other applications
+        allApplications.stream()
+            .filter(app -> app.getStudent().getUserID().equals(student.getUserID()))
+            .filter(app -> !app.getApplicationId().equals(application.getApplicationId()))
+            .filter(app -> app.getStatus() != ApplicationStatus.WITHDRAWN)
+            .forEach(app -> {
+                app.setStatus(ApplicationStatus.WITHDRAWN);
+                app.setWithdrawalStatus("APPROVED"); // Auto-approved withdrawal
+            });
+        
+        return new StudentApplicationResult(true, "Placement accepted successfully! All other applications have been withdrawn.");
     }
     
     /**

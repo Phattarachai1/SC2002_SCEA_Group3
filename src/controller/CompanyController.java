@@ -7,6 +7,7 @@ import sc2002_grpproject.enums.ApplicationStatus;
 import sc2002_grpproject.controller.result.PostingResult;
 import sc2002_grpproject.controller.result.CompanyApplicationResult;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,7 @@ public class CompanyController {
     public static List<Internship> filterByStatus(List<Internship> internships, InternshipStatus status) {
         return internships.stream()
             .filter(i -> i.getStatus() == status)
+            .sorted(Comparator.comparing(Internship::getTitle))
             .collect(Collectors.toList());
     }
     
@@ -39,6 +41,7 @@ public class CompanyController {
     public static List<Internship> filterByLevel(List<Internship> internships, InternshipLevel level) {
         return internships.stream()
             .filter(i -> i.getLevel() == level)
+            .sorted(Comparator.comparing(Internship::getTitle))
             .collect(Collectors.toList());
     }
     
@@ -48,6 +51,7 @@ public class CompanyController {
     public static List<Internship> filterByVisibility(List<Internship> internships, boolean visible) {
         return internships.stream()
             .filter(i -> i.isVisible() == visible)
+            .sorted(Comparator.comparing(Internship::getTitle))
             .collect(Collectors.toList());
     }
     
@@ -70,6 +74,10 @@ public class CompanyController {
         // Validate slots
         if (slots <= 0) {
             return new PostingResult(false, "Number of slots must be positive.");
+        }
+        
+        if (slots > 10) {
+            return new PostingResult(false, "Maximum 10 slots allowed per internship.");
         }
         
         // Check if rep can create more internships using active count

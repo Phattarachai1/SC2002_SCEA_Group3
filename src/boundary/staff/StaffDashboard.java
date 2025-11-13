@@ -312,21 +312,29 @@ public class StaffDashboard extends JFrame {
     }
 
     private JPanel createSimpleReportsPanel() {
-        JPanel panel = new JPanel(new GridLayout(5, 2, 20, 20));
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBackground(new Color(235, 250, 235));
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        panel.add(createReportButton("Students Report", this::showStudentsReport));
-        panel.add(createReportButton("Internships Report", this::showInternshipsReport));
-        panel.add(createReportButton("Applications Report", this::showApplicationsReport));
-        panel.add(createReportButton("Companies Report", this::showCompaniesReport));
-        panel.add(createReportButton("Pending Internships", this::showPendingInternships));
-        panel.add(createReportButton("Pending Withdrawals", this::showPendingWithdrawals));
-        panel.add(createReportButton("Approved Internships", this::showApprovedInternships));
-        panel.add(createReportButton("Full System Report", this::showFullReport));
-
+        // Report buttons grid
+        JPanel buttonsPanel = new JPanel(new GridLayout(4, 2, 20, 20));
+        buttonsPanel.setBackground(new Color(235, 250, 235));
+        buttonsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        
+        buttonsPanel.add(createReportButton("Students Report", this::showStudentsReport));
+        buttonsPanel.add(createReportButton("Internships Report", this::showInternshipsReport));
+        buttonsPanel.add(createReportButton("Applications Report", this::showApplicationsReport));
+        buttonsPanel.add(createReportButton("Companies Report", this::showCompaniesReport));
+        buttonsPanel.add(createReportButton("Pending Internships", this::showPendingInternships));
+        buttonsPanel.add(createReportButton("Pending Withdrawals", this::showPendingWithdrawals));
+        buttonsPanel.add(createReportButton("Approved Internships", this::showApprovedInternships));
+        buttonsPanel.add(createReportButton("Full System Report", this::showFullReport));
+        
+        panel.add(buttonsPanel, BorderLayout.CENTER);
+        
         return panel;
     }
+
 
     private JButton createReportButton(String text, Runnable action) {
         JButton btn = createButton(text);

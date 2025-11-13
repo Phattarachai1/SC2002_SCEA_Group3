@@ -18,6 +18,18 @@ public class InternshipTablePanel extends JPanel {
     private DefaultTableModel internshipModel;
     private CompanyActionHandler actionHandler;
     private JLabel countLabel;  // Added to track the count label
+    
+    // Filter state persistence
+    private JComboBox<String> statusFilter;
+    private JComboBox<String> levelFilter;
+    private JComboBox<String> visibilityFilter;
+    private JComboBox<String> sortByFilter;
+    private JComboBox<String> orderFilter;
+    private String savedStatus = "All";
+    private String savedLevel = "All";
+    private String savedVisibility = "All";
+    private String savedSortBy = "Default (Status)";
+    private String savedOrder = "Ascending";
 
     public InternshipTablePanel(CompanyRepresentative rep, List<Internship> internships,
                                 List<InternshipApplication> applications,
@@ -74,37 +86,62 @@ public class InternshipTablePanel extends JPanel {
     private JPanel createFilterPanel() {
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         filterPanel.setBackground(new Color(245, 255, 250));
-        filterPanel.setBorder(BorderFactory.createTitledBorder("Filters"));
+        filterPanel.setBorder(BorderFactory.createTitledBorder("Filters & Sorting"));
         
         filterPanel.add(new JLabel("Status:"));
-        JComboBox<String> statusFilter = new JComboBox<>(new String[]{"All", "PENDING", "APPROVED", "REJECTED", "FILLED"});
+        statusFilter = new JComboBox<>(new String[]{"All", "PENDING", "APPROVED", "REJECTED", "FILLED"});
         statusFilter.setFont(new Font("Arial", Font.PLAIN, 12));
+        statusFilter.setSelectedItem(savedStatus); // Restore saved filter
         filterPanel.add(statusFilter);
         
         filterPanel.add(new JLabel("Level:"));
-        JComboBox<String> levelFilter = new JComboBox<>(new String[]{"All", "BASIC", "INTERMEDIATE", "ADVANCED"});
+        levelFilter = new JComboBox<>(new String[]{"All", "BASIC", "INTERMEDIATE", "ADVANCED"});
         levelFilter.setFont(new Font("Arial", Font.PLAIN, 12));
+        levelFilter.setSelectedItem(savedLevel); // Restore saved filter
         filterPanel.add(levelFilter);
         
         filterPanel.add(new JLabel("Visibility:"));
-        JComboBox<String> visibilityFilter = new JComboBox<>(new String[]{"All", "Visible", "Hidden"});
+        visibilityFilter = new JComboBox<>(new String[]{"All", "Visible", "Hidden"});
         visibilityFilter.setFont(new Font("Arial", Font.PLAIN, 12));
+        visibilityFilter.setSelectedItem(savedVisibility); // Restore saved filter
         filterPanel.add(visibilityFilter);
+        
+        // Sorting options
+        filterPanel.add(new JLabel("Sort By:"));
+        sortByFilter = new JComboBox<>(new String[]{"Default (Status)", "ID", "Title", "Company", "Level", "Opening Date", "Closing Date"});
+        sortByFilter.setFont(new Font("Arial", Font.PLAIN, 12));
+        sortByFilter.setSelectedItem(savedSortBy); // Restore saved sort
+        filterPanel.add(sortByFilter);
+        
+        filterPanel.add(new JLabel("Order:"));
+        orderFilter = new JComboBox<>(new String[]{"Ascending", "Descending"});
+        orderFilter.setFont(new Font("Arial", Font.PLAIN, 12));
+        orderFilter.setSelectedItem(savedOrder); // Restore saved order
+        filterPanel.add(orderFilter);
         
         JButton applyFilterBtn = createButton("Apply Filters");
         applyFilterBtn.addActionListener(e -> {
-            String status = (String) statusFilter.getSelectedItem();
-            String level = (String) levelFilter.getSelectedItem();
-            String visibility = (String) visibilityFilter.getSelectedItem();
-            refreshWithFilters(status, level, visibility);
+            savedStatus = (String) statusFilter.getSelectedItem();
+            savedLevel = (String) levelFilter.getSelectedItem();
+            savedVisibility = (String) visibilityFilter.getSelectedItem();
+            savedSortBy = (String) sortByFilter.getSelectedItem();
+            savedOrder = (String) orderFilter.getSelectedItem();
+            refreshWithFilters(savedStatus, savedLevel, savedVisibility);
         });
         filterPanel.add(applyFilterBtn);
         
         JButton clearFilterBtn = createButton("Clear Filters");
         clearFilterBtn.addActionListener(e -> {
+            savedStatus = "All";
+            savedLevel = "All";
+            savedVisibility = "All";
+            savedSortBy = "Default (Status)";
+            savedOrder = "Ascending";
             statusFilter.setSelectedIndex(0);
             levelFilter.setSelectedIndex(0);
             visibilityFilter.setSelectedIndex(0);
+            sortByFilter.setSelectedIndex(0);
+            orderFilter.setSelectedIndex(0);
             refresh();
         });
         filterPanel.add(clearFilterBtn);
@@ -213,36 +250,7 @@ public class InternshipTablePanel extends JPanel {
     }
 
     public void refresh() {
-        internshipModel.setRowCount(0);
-        
-        List<Internship> myInternships = internships.stream()
-            .filter(i -> i.getCompanyRepInCharge().getUserID().equals(rep.getUserID()))
-            .collect(Collectors.toList());
-
-        for (Internship i : myInternships) {
-            long successfulCount = applications.stream()
-                .filter(app -> app.getInternship().getInternshipID().equals(i.getInternshipID()))
-                .filter(app -> app.getStatus() == ApplicationStatus.SUCCESSFUL)
-                .count();
-            int availableSlots = i.getSlots() - (int)successfulCount;
-            
-            internshipModel.addRow(new Object[]{
-                i.getInternshipID(),
-                i.getTitle(),
-                i.getLevel(),
-                i.getPreferredMajor(),
-                i.getSlots(),
-                availableSlots,
-                i.getConfirmedPlacements(),
-                i.getOpeningDate(),
-                i.getClosingDate(),
-                i.getStatus(),
-                i.isVisible() ? "Yes" : "No"
-            });
-        }
-        
-        // Update the count label after refreshing the table
-        updateCountLabel();
+        refreshWithFilters(savedStatus, savedLevel, savedVisibility);
     }
 
     public void refreshWithFilters(String status, String level, String visibility) {
@@ -270,6 +278,9 @@ public class InternshipTablePanel extends JPanel {
                 .filter(i -> i.isVisible() == showVisible)
                 .collect(Collectors.toList());
         }
+        
+        // Apply sorting
+        applySorting(myInternships);
 
         for (Internship i : myInternships) {
             long successfulCount = applications.stream()
@@ -293,7 +304,9 @@ public class InternshipTablePanel extends JPanel {
             });
         }
         
-        if (myInternships.isEmpty()) {
+        // Only show warning if filters are actually applied (not on initial load)
+        if (myInternships.isEmpty() && 
+            (!status.equals("All") || !level.equals("All") || !visibility.equals("All"))) {
             actionHandler.showInfo("No internships found matching your filter criteria.");
         }
     }
@@ -304,6 +317,85 @@ public class InternshipTablePanel extends JPanel {
             .filter(i -> i.getCompanyRepInCharge().getUserID().equals(rep.getUserID()))
             .count();
         countLabel.setText("Active Internships: " + activeCount + "/5 (Total Created: " + totalCount + ")");
+    }
+    
+    private void applySorting(List<Internship> internships) {
+        java.util.Comparator<Internship> comparator = null;
+        
+        switch (savedSortBy) {
+            case "Default (Status)":
+                if ("Ascending".equals(savedOrder)) {
+                    // PENDING -> APPROVED -> REJECTED -> FILLED (within each status, sort by ID)
+                    comparator = (i1, i2) -> {
+                        int statusOrder1 = getStatusOrder(i1.getStatus());
+                        int statusOrder2 = getStatusOrder(i2.getStatus());
+                        if (statusOrder1 != statusOrder2) {
+                            return statusOrder1 - statusOrder2;
+                        }
+                        return i1.getInternshipID().compareTo(i2.getInternshipID());
+                    };
+                } else {
+                    // APPROVED -> REJECTED -> FILLED -> PENDING (within each status, sort by ID)
+                    comparator = (i1, i2) -> {
+                        int statusOrder1 = getStatusOrderDescending(i1.getStatus());
+                        int statusOrder2 = getStatusOrderDescending(i2.getStatus());
+                        if (statusOrder1 != statusOrder2) {
+                            return statusOrder1 - statusOrder2;
+                        }
+                        return i1.getInternshipID().compareTo(i2.getInternshipID());
+                    };
+                }
+                break;
+            case "ID":
+                comparator = java.util.Comparator.comparing(Internship::getInternshipID);
+                break;
+            case "Title":
+                comparator = java.util.Comparator.comparing(Internship::getTitle, String.CASE_INSENSITIVE_ORDER);
+                break;
+            case "Company":
+                comparator = java.util.Comparator.comparing(Internship::getCompanyName, String.CASE_INSENSITIVE_ORDER);
+                break;
+            case "Level":
+                comparator = java.util.Comparator.comparing(Internship::getLevel);
+                break;
+            case "Opening Date":
+                comparator = java.util.Comparator.comparing(Internship::getOpeningDate);
+                break;
+            case "Closing Date":
+                comparator = java.util.Comparator.comparing(Internship::getClosingDate);
+                break;
+            default:
+                comparator = java.util.Comparator.comparing(Internship::getInternshipID);
+        }
+        
+        // Apply descending order for non-status sorts
+        if (!"Default (Status)".equals(savedSortBy) && "Descending".equals(savedOrder)) {
+            comparator = comparator.reversed();
+        }
+        
+        internships.sort(comparator);
+    }
+    
+    private int getStatusOrder(InternshipStatus status) {
+        // PENDING -> APPROVED -> REJECTED -> FILLED
+        switch (status) {
+            case PENDING: return 0;
+            case APPROVED: return 1;
+            case REJECTED: return 2;
+            case FILLED: return 3;
+            default: return 4;
+        }
+    }
+    
+    private int getStatusOrderDescending(InternshipStatus status) {
+        // APPROVED -> REJECTED -> FILLED -> PENDING
+        switch (status) {
+            case APPROVED: return 0;
+            case REJECTED: return 1;
+            case FILLED: return 2;
+            case PENDING: return 3;
+            default: return 4;
+        }
     }
 
     private JButton createButton(String text) {

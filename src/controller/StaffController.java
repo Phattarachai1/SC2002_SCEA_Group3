@@ -7,6 +7,7 @@ import sc2002_grpproject.enums.ApprovalStatus;
 import sc2002_grpproject.controller.result.ApprovalResult;
 import sc2002_grpproject.controller.stats.InternshipStats;
 import sc2002_grpproject.controller.stats.RepresentativeStats;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,6 +65,7 @@ public class StaffController {
     public static List<Internship> filterByStatus(List<Internship> internships, InternshipStatus status) {
         return internships.stream()
             .filter(i -> i.getStatus() == status)
+            .sorted(Comparator.comparing(Internship::getTitle))
             .collect(Collectors.toList());
     }
     
@@ -71,6 +73,7 @@ public class StaffController {
     public static List<Internship> filterByLevel(List<Internship> internships, InternshipLevel level) {
         return internships.stream()
             .filter(i -> i.getLevel() == level)
+            .sorted(Comparator.comparing(Internship::getTitle))
             .collect(Collectors.toList());
     }
     
@@ -78,6 +81,7 @@ public class StaffController {
     public static List<Internship> filterByCompany(List<Internship> internships, String companyName) {
         return internships.stream()
             .filter(i -> i.getCompanyName().toLowerCase().contains(companyName.toLowerCase()))
+            .sorted(Comparator.comparing(Internship::getTitle))
             .collect(Collectors.toList());
     }
     

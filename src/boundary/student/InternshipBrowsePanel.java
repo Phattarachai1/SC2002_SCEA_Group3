@@ -17,6 +17,18 @@ public class InternshipBrowsePanel extends JPanel {
     
     private JTable internshipTable;
     private DefaultTableModel internshipModel;
+    
+    // Filter state persistence
+    private JComboBox<String> levelFilter;
+    private JTextField closingDateField;
+    private String savedLevel = "All";
+    private String savedClosingDate = "";
+    
+    // Sorting state persistence
+    private JComboBox<String> sortByFilter;
+    private JComboBox<String> orderFilter;
+    private String savedSortBy = "ID";
+    private String savedOrder = "Ascending";
 
     public InternshipBrowsePanel(Student student, List<Internship> internships,
                                  StudentActionHandler actionHandler) {
@@ -68,31 +80,54 @@ public class InternshipBrowsePanel extends JPanel {
     private JPanel createFilterPanel() {
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         filterPanel.setBackground(new Color(245, 255, 250));
-        filterPanel.setBorder(BorderFactory.createTitledBorder("Filters"));
+        filterPanel.setBorder(BorderFactory.createTitledBorder("Filters & Sorting"));
         
         filterPanel.add(new JLabel("Level:"));
-        JComboBox<String> levelFilter = new JComboBox<>(new String[]{"All", "BASIC", "INTERMEDIATE", "ADVANCED"});
+        levelFilter = new JComboBox<>(new String[]{"All", "BASIC", "INTERMEDIATE", "ADVANCED"});
         levelFilter.setFont(new Font("Arial", Font.PLAIN, 12));
+        levelFilter.setSelectedItem(savedLevel); // Restore saved filter
         filterPanel.add(levelFilter);
         
         filterPanel.add(new JLabel("Closing Date:"));
-        JTextField closingDateField = new JTextField(10);
+        closingDateField = new JTextField(10);
         closingDateField.setFont(new Font("Arial", Font.PLAIN, 12));
         closingDateField.setToolTipText("Format: YYYY-MM-DD (leave blank for all)");
+        closingDateField.setText(savedClosingDate); // Restore saved filter
         filterPanel.add(closingDateField);
+        
+        // Sorting controls
+        filterPanel.add(new JLabel("Sort By:"));
+        sortByFilter = new JComboBox<>(new String[]{"ID", "Title", "Company", "Level", "Opening Date", "Closing Date"});
+        sortByFilter.setFont(new Font("Arial", Font.PLAIN, 12));
+        sortByFilter.setSelectedItem(savedSortBy); // Restore saved sorting
+        filterPanel.add(sortByFilter);
+        
+        filterPanel.add(new JLabel("Order:"));
+        orderFilter = new JComboBox<>(new String[]{"Ascending", "Descending"});
+        orderFilter.setFont(new Font("Arial", Font.PLAIN, 12));
+        orderFilter.setSelectedItem(savedOrder); // Restore saved order
+        filterPanel.add(orderFilter);
         
         JButton applyFilterBtn = createButton("Apply Filters");
         applyFilterBtn.addActionListener(e -> {
-            String level = (String) levelFilter.getSelectedItem();
-            String closingDate = closingDateField.getText().trim();
-            refreshWithFilters(level, closingDate);
+            savedLevel = (String) levelFilter.getSelectedItem();
+            savedClosingDate = closingDateField.getText().trim();
+            savedSortBy = (String) sortByFilter.getSelectedItem();
+            savedOrder = (String) orderFilter.getSelectedItem();
+            refreshWithFilters(savedLevel, savedClosingDate);
         });
         filterPanel.add(applyFilterBtn);
         
         JButton clearFilterBtn = createButton("Clear Filters");
         clearFilterBtn.addActionListener(e -> {
+            savedLevel = "All";
+            savedClosingDate = "";
+            savedSortBy = "ID";
+            savedOrder = "Ascending";
             levelFilter.setSelectedIndex(0);
             closingDateField.setText("");
+            sortByFilter.setSelectedIndex(0);
+            orderFilter.setSelectedIndex(0);
             refresh();
         });
         filterPanel.add(clearFilterBtn);
@@ -184,6 +219,9 @@ public class InternshipBrowsePanel extends JPanel {
                       && actionHandler.isEligible(student, i))
             .collect(Collectors.toList());
 
+        // Apply default sorting (ID, Ascending)
+        applySorting(available);
+
         for (Internship i : available) {
             internshipModel.addRow(new Object[]{
                 i.getInternshipID(),
@@ -233,8 +271,8 @@ public class InternshipBrowsePanel extends JPanel {
             }
         }
         
-        // Sort alphabetically by title
-        available.sort((i1, i2) -> i1.getTitle().compareToIgnoreCase(i2.getTitle()));
+        // Apply sorting based on user selection
+        applySorting(available);
 
         for (Internship i : available) {
             internshipModel.addRow(new Object[]{
@@ -253,6 +291,41 @@ public class InternshipBrowsePanel extends JPanel {
         if (available.isEmpty()) {
             actionHandler.showInfo("No internships found matching your filter criteria.");
         }
+    }
+    
+    private void applySorting(List<Internship> internships) {
+        java.util.Comparator<Internship> comparator = null;
+        
+        // Determine comparator based on sortBy selection
+        switch (savedSortBy) {
+            case "ID":
+                comparator = java.util.Comparator.comparing(Internship::getInternshipID);
+                break;
+            case "Title":
+                comparator = java.util.Comparator.comparing(Internship::getTitle, String.CASE_INSENSITIVE_ORDER);
+                break;
+            case "Company":
+                comparator = java.util.Comparator.comparing(Internship::getCompanyName, String.CASE_INSENSITIVE_ORDER);
+                break;
+            case "Level":
+                comparator = java.util.Comparator.comparing(Internship::getLevel);
+                break;
+            case "Opening Date":
+                comparator = java.util.Comparator.comparing(Internship::getOpeningDate);
+                break;
+            case "Closing Date":
+                comparator = java.util.Comparator.comparing(Internship::getClosingDate);
+                break;
+            default:
+                comparator = java.util.Comparator.comparing(Internship::getInternshipID);
+        }
+        
+        // Apply descending order if selected
+        if ("Descending".equals(savedOrder)) {
+            comparator = comparator.reversed();
+        }
+        
+        internships.sort(comparator);
     }
 
     private JButton createButton(String text) {
