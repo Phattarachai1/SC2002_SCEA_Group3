@@ -13,10 +13,11 @@ import java.util.List;
  */
 public class MainAppGUI {
     public static void main(String[] args) {
-        // Load data
-        List<Student> students = DataManager.loadStudents("sample_student_list.csv");
-        List<CareerCenterStaff> staff = DataManager.loadStaff("sample_staff_list.csv");
-        List<CompanyRepresentative> companyReps = DataManager.loadCompanyReps("sample_company_representative_list.csv");
+        // Load data using DataManager instance
+        DataManager dataManager = new DataManager();
+        List<Student> students = dataManager.loadStudents("sample_student_list.csv");
+        List<CareerCenterStaff> staff = dataManager.loadStaff("sample_staff_list.csv");
+        List<CompanyRepresentative> companyReps = dataManager.loadCompanyReps("sample_company_representative_list.csv");
         
         // Combine into User list
         List<User> allUsers = new java.util.ArrayList<>();

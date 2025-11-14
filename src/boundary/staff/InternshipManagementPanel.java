@@ -144,7 +144,7 @@ public class InternshipManagementPanel extends JPanel {
     }
 
     private void createTable() {
-        String[] columns = {"ID", "Title", "Company", "Level", "Major", "Slots", "Opening", "Closing", "Status"};
+        String[] columns = {"ID", "Title", "Description", "Company", "Level", "Major", "Slots", "Opening", "Closing", "Status"};
         internshipModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -240,6 +240,7 @@ public class InternshipManagementPanel extends JPanel {
             internshipModel.addRow(new Object[]{
                 i.getInternshipID(),
                 i.getTitle(),
+                i.getDescription(),
                 i.getCompanyName(),
                 i.getLevel(),
                 i.getPreferredMajor(),

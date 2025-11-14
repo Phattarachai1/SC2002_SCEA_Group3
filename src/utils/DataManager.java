@@ -11,8 +11,9 @@ import sc2002_grpproject.entity.*;
 /**
  * Utility class for loading data from CSV files.
  * Provides methods to load students, staff, and company representatives.
+ * Implements IUserRepository interface for data access abstraction.
  */
-public class DataManager {
+public class DataManager implements IUserRepository {
     
     /**
      * Loads student data from a CSV file.
@@ -21,7 +22,8 @@ public class DataManager {
      * @param filePath the path to the CSV file
      * @return a list of Student objects
      */
-    public static List<Student> loadStudents(String filePath) {
+    @Override
+    public List<Student> loadStudents(String filePath) {
         List<Student> students = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             br.readLine(); // Skip header
@@ -44,7 +46,8 @@ public class DataManager {
      * @param filePath the path to the CSV file
      * @return a list of CareerCenterStaff objects
      */
-    public static List<CareerCenterStaff> loadStaff(String filePath) {
+    @Override
+    public List<CareerCenterStaff> loadStaff(String filePath) {
         List<CareerCenterStaff> staff = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             br.readLine(); // Skip header
@@ -67,7 +70,8 @@ public class DataManager {
      * @param filePath the path to the CSV file
      * @return a list of CompanyRepresentative objects
      */
-    public static List<CompanyRepresentative> loadCompanyReps(String filePath) {
+    @Override
+    public List<CompanyRepresentative> loadCompanyReps(String filePath) {
         List<CompanyRepresentative> reps = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             br.readLine(); // Skip header

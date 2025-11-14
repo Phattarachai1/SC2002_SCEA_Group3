@@ -5,6 +5,8 @@ import sc2002_grpproject.enums.InternshipLevel;
 import sc2002_grpproject.enums.InternshipStatus;
 import sc2002_grpproject.enums.ApplicationStatus;
 import sc2002_grpproject.controller.result.StudentApplicationResult;
+import sc2002_grpproject.utils.IInternshipFilter;
+import sc2002_grpproject.utils.InternshipFilterService;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -12,6 +14,8 @@ import java.util.stream.Collectors;
 
 
 public class StudentController {
+    
+    private static final IInternshipFilter filterService = new InternshipFilterService();
     
 
     public static List<Internship> getAvailableInternships(Student student, List<Internship> allInternships) {
@@ -29,30 +33,21 @@ public class StudentController {
      * Filter internships by level
      */
     public static List<Internship> filterByLevel(List<Internship> internships, InternshipLevel level) {
-        return internships.stream()
-            .filter(i -> i.getLevel() == level)
-            .sorted(Comparator.comparing(Internship::getTitle))
-            .collect(Collectors.toList());
+        return filterService.filterByLevel(internships, level);
     }
     
     /**
      * Filter internships by status
      */
     public static List<Internship> filterByStatus(List<Internship> internships, InternshipStatus status) {
-        return internships.stream()
-            .filter(i -> i.getStatus() == status)
-            .sorted(Comparator.comparing(Internship::getTitle))
-            .collect(Collectors.toList());
+        return filterService.filterByStatus(internships, status);
     }
     
     /**
      * Filter internships by closing date (before a given date)
      */
     public static List<Internship> filterByClosingDate(List<Internship> internships, LocalDate beforeDate) {
-        return internships.stream()
-            .filter(i -> i.getClosingDate().isBefore(beforeDate.plusDays(1)))
-            .sorted(Comparator.comparing(Internship::getTitle))
-            .collect(Collectors.toList());
+        return filterService.filterByClosingDate(internships, beforeDate);
     }
     
     /**

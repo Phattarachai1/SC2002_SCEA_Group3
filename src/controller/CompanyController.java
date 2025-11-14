@@ -6,6 +6,8 @@ import sc2002_grpproject.enums.InternshipStatus;
 import sc2002_grpproject.enums.ApplicationStatus;
 import sc2002_grpproject.controller.result.PostingResult;
 import sc2002_grpproject.controller.result.CompanyApplicationResult;
+import sc2002_grpproject.utils.IInternshipFilter;
+import sc2002_grpproject.utils.InternshipFilterService;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.stream.Collectors;
  * Controller class for handling company representative business logic
  */
 public class CompanyController {
+    
+    private static final IInternshipFilter filterService = new InternshipFilterService();
     
     /**
      * Get all internships posted by a company representative
@@ -29,30 +33,21 @@ public class CompanyController {
      * Filter internships by status
      */
     public static List<Internship> filterByStatus(List<Internship> internships, InternshipStatus status) {
-        return internships.stream()
-            .filter(i -> i.getStatus() == status)
-            .sorted(Comparator.comparing(Internship::getTitle))
-            .collect(Collectors.toList());
+        return filterService.filterByStatus(internships, status);
     }
     
     /**
      * Filter internships by level
      */
     public static List<Internship> filterByLevel(List<Internship> internships, InternshipLevel level) {
-        return internships.stream()
-            .filter(i -> i.getLevel() == level)
-            .sorted(Comparator.comparing(Internship::getTitle))
-            .collect(Collectors.toList());
+        return filterService.filterByLevel(internships, level);
     }
     
     /**
      * Filter internships by visibility
      */
     public static List<Internship> filterByVisibility(List<Internship> internships, boolean visible) {
-        return internships.stream()
-            .filter(i -> i.isVisible() == visible)
-            .sorted(Comparator.comparing(Internship::getTitle))
-            .collect(Collectors.toList());
+        return filterService.filterByVisibility(internships, visible);
     }
     
     /**

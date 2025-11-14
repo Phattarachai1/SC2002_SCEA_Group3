@@ -27,10 +27,11 @@ public class MainApp {
     private static User currentUser = null;
 
     public static void main(String[] args) {
-        // Load initial data
-        students = DataManager.loadStudents("sample_student_list.csv");
-        staff = DataManager.loadStaff("sample_staff_list.csv");
-        companyReps = DataManager.loadCompanyReps("sample_company_representative_list.csv");
+        // Load initial data using DataManager instance
+        DataManager dataManager = new DataManager();
+        students = dataManager.loadStudents("sample_student_list.csv");
+        staff = dataManager.loadStaff("sample_staff_list.csv");
+        companyReps = dataManager.loadCompanyReps("sample_company_representative_list.csv");
 
         // Combine all users into one list for authentication
         allUsers = new ArrayList<>();

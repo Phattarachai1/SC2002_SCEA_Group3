@@ -38,12 +38,30 @@ public class InternshipApplication {
     public ApplicationStatus getStatus() { return status; }
     public String getWithdrawalStatus() { return withdrawalStatus; }
     public boolean isPlacementConfirmed() { return placementConfirmed; }
+    
+    /**
+     * Checks if a withdrawal has been requested for this application.
+     * 
+     * @return true if withdrawal status is "PENDING", false otherwise
+     */
+    public boolean isWithdrawalRequested() {
+        return "PENDING".equals(withdrawalStatus);
+    }
 
     // Setters
     public void setStatus(ApplicationStatus status) { this.status = status; }
     
     public void setWithdrawalStatus(String withdrawalStatus) { 
         this.withdrawalStatus = withdrawalStatus; 
+    }
+    
+    /**
+     * Sets whether a withdrawal has been requested.
+     * 
+     * @param requested true to set withdrawal status to "PENDING", false to set it to "-"
+     */
+    public void setWithdrawalRequested(boolean requested) {
+        this.withdrawalStatus = requested ? "PENDING" : "-";
     }
     
     public void setPlacementConfirmed(boolean placementConfirmed) { 
