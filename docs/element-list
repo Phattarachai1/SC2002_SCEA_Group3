@@ -1,5 +1,10 @@
 sc2002_grpproject.boundary
+sc2002_grpproject.boundary.company
+sc2002_grpproject.boundary.staff
+sc2002_grpproject.boundary.student
 sc2002_grpproject.controller
+sc2002_grpproject.controller.result
+sc2002_grpproject.controller.stats
 sc2002_grpproject.entity
 sc2002_grpproject.enums
 sc2002_grpproject.main
