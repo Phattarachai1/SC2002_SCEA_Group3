@@ -177,14 +177,14 @@ public class StudentController {
         // Update internship confirmed placements
         application.getInternship().incrementConfirmedPlacements();
         
-        // Automatically withdraw all other applications
+        // Automatically withdraw all other applications and approve their withdrawal
         allApplications.stream()
             .filter(app -> app.getStudent().getUserID().equals(student.getUserID()))
             .filter(app -> !app.getApplicationId().equals(application.getApplicationId()))
             .filter(app -> app.getStatus() != ApplicationStatus.WITHDRAWN)
             .forEach(app -> {
                 app.setStatus(ApplicationStatus.WITHDRAWN);
-                app.setWithdrawalStatus("APPROVED"); // Auto-approved withdrawal
+                app.setWithdrawalStatus("APPROVED"); // Auto-approved withdrawal for all
             });
         
         return new StudentApplicationResult(true, "Placement accepted successfully! All other applications have been withdrawn.");

@@ -312,6 +312,9 @@ public class InternshipTablePanel extends JPanel {
             });
         }
         
+        // Update count label in real-time
+        updateCountLabel();
+        
         // Only show warning if filters are actually applied (not on initial load)
         if (myInternships.isEmpty() && 
             (!status.equals("All") || !level.equals("All") || !visibility.equals("All"))) {
