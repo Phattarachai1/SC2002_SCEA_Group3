@@ -14,7 +14,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Controller class for handling company representative business logic
+ * Controller class for handling company representative business logic.
+ * Manages internship postings, application processing, and visibility controls.
+ * Implements filtering capabilities and enforces business rules for company operations.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
  */
 public class CompanyController {
     

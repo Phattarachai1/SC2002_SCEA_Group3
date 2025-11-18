@@ -5,8 +5,12 @@ package sc2002_grpproject.enums;
  * Tracks the application lifecycle
  */
 public enum ApplicationStatus {
-    PENDING,        // Application submitted, awaiting review
-    SUCCESSFUL,     // Application approved by company
-    UNSUCCESSFUL,   // Application rejected by company
-    WITHDRAWN       // Application withdrawn by student
+    /** Application submitted and awaiting company review */
+    PENDING,
+    /** Application approved by company representative */
+    SUCCESSFUL,
+    /** Application rejected by company representative */
+    UNSUCCESSFUL,
+    /** Application withdrawn by student */
+    WITHDRAWN
 }

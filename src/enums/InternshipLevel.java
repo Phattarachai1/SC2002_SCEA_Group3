@@ -5,7 +5,10 @@ package sc2002_grpproject.enums;
  * Defines the difficulty/year requirement for internships
  */
 public enum InternshipLevel {
-    BASIC,          // For Year 1-2 students
-    INTERMEDIATE,   // For Year 3+ students
-    ADVANCED        // For Year 3+ students
+    /** For Year 1-2 students */
+    BASIC,
+    /** For Year 3+ students */
+    INTERMEDIATE,
+    /** For Year 3+ students with advanced skills */
+    ADVANCED
 }

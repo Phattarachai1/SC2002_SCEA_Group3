@@ -5,8 +5,12 @@ package sc2002_grpproject.enums;
  * Tracks the approval and availability state
  */
 public enum InternshipStatus {
-    PENDING,    // Awaiting staff approval
-    APPROVED,   // Approved by staff and open for applications
-    REJECTED,   // Rejected by staff
-    FILLED      // All slots have been filled
+    /** Awaiting staff approval */
+    PENDING,
+    /** Approved by staff and open for applications */
+    APPROVED,
+    /** Rejected by staff */
+    REJECTED,
+    /** All slots have been filled */
+    FILLED
 }

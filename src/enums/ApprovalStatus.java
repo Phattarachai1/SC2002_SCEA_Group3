@@ -5,7 +5,10 @@ package sc2002_grpproject.enums;
  * Used by staff to manage company representative access
  */
 public enum ApprovalStatus {
-    PENDING,    // Registration awaiting staff approval
-    APPROVED,   // Approved by staff, can post internships
-    REJECTED    // Rejected by staff
+    /** Registration awaiting staff approval */
+    PENDING,
+    /** Approved by staff, can post internships */
+    APPROVED,
+    /** Rejected by staff */
+    REJECTED
 }

@@ -13,6 +13,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controller class for handling career center staff business logic.
+ * Manages approval workflows for company representatives and internship postings.
+ * Provides filtering capabilities and statistical reporting for administrative oversight.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
+ */
 public class StaffController {
     
     private static final IInternshipFilter filterService = new InternshipFilterService();

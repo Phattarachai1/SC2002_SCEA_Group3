@@ -11,7 +11,13 @@ import java.util.List;
 public class AuthController {
     
     /**
-     * Authenticate a user with userID and password
+     * Authenticate a user with userID and password.
+     * Validates credentials against the user database and returns authentication result.
+     * 
+     * @param userID the unique identifier (email) of the user attempting to login
+     * @param password the password entered by the user
+     * @param allUsers the list of all users in the system
+     * @return AuthResult containing success status, authenticated user object, and message
      */
     public static AuthResult authenticate(String userID, String password, List<User> allUsers) {
         User user = allUsers.stream()
@@ -27,7 +33,14 @@ public class AuthController {
     }
     
     /**
-     * Change user password
+     * Change user password with validation.
+     * Validates the old password, checks new password requirements,
+     * and ensures the new password is different from the old one.
+     * 
+     * @param user the user whose password is being changed
+     * @param oldPassword the current password for verification
+     * @param newPassword the new password to set (minimum 4 characters)
+     * @return PasswordChangeResult indicating success or failure with appropriate message
      */
     public static PasswordChangeResult changePassword(User user, String oldPassword, String newPassword) {
         // Verify old password
@@ -55,7 +68,11 @@ public class AuthController {
     }
     
     /**
-     * Get user type as a string
+     * Get user type as a string.
+     * Determines the role of the user (Student, Company Representative, or Career Center Staff).
+     * 
+     * @param user the user whose type is being determined
+     * @return the user type as a string ("Student", "Company Representative", "Career Center Staff", or "Unknown")
      */
     public static String getUserType(User user) {
         if (user instanceof Student) {
@@ -69,21 +86,30 @@ public class AuthController {
     }
     
     /**
-     * Check if user is a student
+     * Check if user is a student.
+     * 
+     * @param user the user to check
+     * @return true if the user is a Student, false otherwise
      */
     public static boolean isStudent(User user) {
         return user instanceof Student;
     }
     
     /**
-     * Check if user is a company representative
+     * Check if user is a company representative.
+     * 
+     * @param user the user to check
+     * @return true if the user is a CompanyRepresentative, false otherwise
      */
     public static boolean isCompanyRepresentative(User user) {
         return user instanceof CompanyRepresentative;
     }
     
     /**
-     * Check if user is staff
+     * Check if user is career center staff.
+     * 
+     * @param user the user to check
+     * @return true if the user is CareerCenterStaff, false otherwise
      */
     public static boolean isStaff(User user) {
         return user instanceof CareerCenterStaff;

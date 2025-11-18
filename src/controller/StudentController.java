@@ -13,6 +13,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+/**
+ * Controller class for handling student-related business logic.
+ * Manages internship browsing, application submission, and eligibility checking.
+ * Implements filtering capabilities and enforces student-specific business rules.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
+ */
 public class StudentController {
     
     private static final IInternshipFilter filterService = new InternshipFilterService();
