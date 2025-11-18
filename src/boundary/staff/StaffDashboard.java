@@ -12,6 +12,13 @@ import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Represents the main GUI dashboard for career center staff.
+ * Provides tabbed interface for managing company representatives, internships, and viewing statistics.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
+ */
 public class StaffDashboard extends JFrame {
     private CareerCenterStaff staff;
     private List<Internship> internships;

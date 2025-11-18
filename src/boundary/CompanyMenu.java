@@ -7,6 +7,13 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+/**
+ * Represents the boundary layer for handling company representative interactions in console mode.
+ * Provides menu-driven interface for managing internship postings and applications.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
+ */
 public class CompanyMenu {
 
     public static void show(CompanyRepresentative rep, List<Internship> allInternships,

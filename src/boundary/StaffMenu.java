@@ -7,6 +7,13 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+/**
+ * Represents the boundary layer for handling career center staff interactions in console mode.
+ * Provides menu-driven interface for administrative oversight and approval workflows.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
+ */
 public class StaffMenu {
 
     public static void show(CareerCenterStaff staff, List<CompanyRepresentative> allCompanyReps,

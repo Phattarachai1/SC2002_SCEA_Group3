@@ -7,6 +7,13 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+/**
+ * Represents the boundary layer for handling student interactions in console mode.
+ * Provides menu-driven interface for browsing internships and managing applications.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
+ */
 public class StudentMenu {
 
     public static void show(Student student, List<Internship> allInternships, List<InternshipApplication> allApplications) {

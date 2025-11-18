@@ -9,6 +9,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+/**
+ * Represents the boundary layer for handling user login, registration, and initial interactions.
+ * Provides GUI interface for authentication and redirects users to their respective dashboards.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
+ */
 public class LoginFrame extends JFrame {
     private JTextField userIdField;
     private JPasswordField passwordField;

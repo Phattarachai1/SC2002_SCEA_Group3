@@ -9,6 +9,13 @@ import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * GUI panel displaying student applications for company's internships.
+ * Provides filtering by status and approval/rejection functionality.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
+ */
 public class ApplicationTablePanel extends JPanel {
     private CompanyRepresentative rep;
     private List<Internship> internships;

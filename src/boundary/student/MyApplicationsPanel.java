@@ -9,6 +9,13 @@ import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * GUI panel displaying student's internship applications.
+ * Provides filtering by status and withdrawal functionality.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
+ */
 public class MyApplicationsPanel extends JPanel {
     private Student student;
     private List<InternshipApplication> applications;

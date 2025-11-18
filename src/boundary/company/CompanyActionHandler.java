@@ -7,6 +7,13 @@ import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Handles all company representative business logic and UI interactions.
+ * Manages internship creation, editing, deletion, and application processing.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
+ */
 public class CompanyActionHandler {
     private CompanyRepresentative rep;
     private List<Internship> internships;

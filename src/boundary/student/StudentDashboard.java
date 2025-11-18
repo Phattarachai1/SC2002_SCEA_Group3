@@ -11,6 +11,13 @@ import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Represents the main GUI dashboard for students.
+ * Provides tabbed interface for browsing internships and managing applications.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
+ */
 public class StudentDashboard extends JFrame {
     private Student student;
     private List<Internship> internships;

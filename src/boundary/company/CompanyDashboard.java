@@ -10,6 +10,13 @@ import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Represents the main GUI dashboard for company representatives.
+ * Provides tabbed interface for managing internship postings and viewing applications.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
+ */
 public class CompanyDashboard extends JFrame {
     private CompanyRepresentative rep;
     private List<Internship> internships;

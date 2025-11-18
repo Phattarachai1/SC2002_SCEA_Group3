@@ -6,6 +6,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+/**
+ * Handles all student business logic and UI interactions.
+ * Manages internship applications, withdrawals, and placement confirmations.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
+ */
 public class StudentActionHandler {
     private Student student;
     private List<Internship> internships;

@@ -9,6 +9,13 @@ import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * GUI panel displaying company's internship postings in a table format.
+ * Provides filtering, sorting, and management capabilities for internship listings.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
+ */
 public class InternshipTablePanel extends JPanel {
     private CompanyRepresentative rep;
     private List<Internship> internships;

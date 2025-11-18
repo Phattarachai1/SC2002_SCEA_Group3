@@ -9,6 +9,13 @@ import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * GUI panel for managing internship postings and approval workflows.
+ * Provides filtering by status and approval/rejection functionality for staff.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
+ */
 public class InternshipManagementPanel extends JPanel {
     private List<Internship> internships;
     private StaffActionHandler actionHandler;

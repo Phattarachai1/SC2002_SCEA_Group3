@@ -6,7 +6,11 @@ import javax.swing.*;
 import java.util.List;
 
 /**
- * Handles all staff business logic and operations
+ * Handles all career center staff business logic and UI interactions.
+ * Manages approval workflows for company representatives and internship postings.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
  */
 public class StaffActionHandler {
     private List<Internship> internships;

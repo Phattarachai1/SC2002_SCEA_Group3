@@ -9,6 +9,13 @@ import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * GUI panel for managing company representative accounts and approval status.
+ * Provides filtering by approval status and approval/rejection functionality for staff.
+ * 
+ * @author SC2002_SCEA_Group3
+ * @version 1.0
+ */
 public class CompanyRepManagementPanel extends JPanel {
     private List<CompanyRepresentative> companyReps;
     private StaffActionHandler actionHandler;
