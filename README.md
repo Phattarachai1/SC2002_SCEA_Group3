@@ -2,6 +2,11 @@
 
 ## 🚀 How to Run the GUI Application
 
+### Link
+- [Main Page](https://phattarachai1.github.io/SC2002_SCEA_Group3/)
+- [Report](https://phattarachai1.github.io/SC2002_SCEA_Group3/report.pdf)
+- [JAVA DOC](https://phattarachai1.github.io/SC2002_SCEA_Group3/docs/)
+
 ### Prerequisites
 - Java JDK 11 or higher
 - PowerShell or Command Prompt (Windows) / Terminal (Mac/Linux)
